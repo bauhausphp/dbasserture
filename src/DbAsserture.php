@@ -25,6 +25,16 @@ class DbAsserture
         $this->database->exec($query);
     }
 
+    /**
+     * @param string|int[][] $register
+     */
+    public function insertMany(string $table, array $registers): void
+    {
+        foreach ($registers as $register) {
+            $this->insertOne($table, $register);
+        }
+    }
+
     public function cleanTable(string $table): void
     {
         $query = new TruncateQuery($table);

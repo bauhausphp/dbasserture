@@ -2,6 +2,7 @@
 
 namespace Bauhaus\DbAsserture\Tests;
 
+use StdClass;
 use Bauhaus\DbAsserture\Database;
 use Bauhaus\DbAsserture\DbAsserture;
 use Bauhaus\DbAsserture\Queries\InsertQuery;
@@ -31,9 +32,23 @@ class DbAssertureTest extends TestCase
     {
         $query = new InsertQuery('table', ['field1' => 'value1']);
 
-        $this->expectDatabaseToBeCalledWith($query);
+        $this->expectDatabaseToBeCalledWith([$query]);
 
         $this->dbAsserture->insertOne('table', ['field1' => 'value1']);
+    }
+
+    /**
+     * @test
+     */
+    public function insertManyRegistersByCallingDatabaseWithManyInsertQueries(): void
+    {
+        $query = new InsertQuery('table', ['field1' => 'value1']);
+
+        $this->expectDatabaseToBeCalledWith([$query]);
+
+        $this->dbAsserture->insertMany('table', [
+            ['field1' => 'value1'],
+        ]);
     }
 
     /**
@@ -43,16 +58,21 @@ class DbAssertureTest extends TestCase
     {
         $query = new TruncateQuery('table');
 
-        $this->expectDatabaseToBeCalledWith($query);
+        $this->expectDatabaseToBeCalledWith([$query]);
 
         $this->dbAsserture->cleanTable('table');
     }
 
-    private function expectDatabaseToBeCalledWith(Query $query): void
+    /**
+     * @param Query[] $queries
+     */
+    private function expectDatabaseToBeCalledWith(array $queries): void
     {
+        $count = count($queries);
+
         $this->database
-            ->expects($this->once())
+            ->expects($this->exactly($count))
             ->method('exec')
-            ->with($query);
+            ->withConsecutive($queries);
     }
 }
