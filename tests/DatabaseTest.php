@@ -43,7 +43,7 @@ class DatabaseTest extends TestCase
     }
 
     /**
-     * @param string $register
+     * @param string|int[] $register
      */
     private function createQueryToInsert(array $register): Query
     {

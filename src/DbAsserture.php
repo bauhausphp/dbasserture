@@ -16,7 +16,7 @@ class DbAsserture
     }
 
     /**
-     * @param string[] $register
+     * @param string|int[] $register
      */
     public function insertOne(string $table, array $register): void
     {
