@@ -13,12 +13,24 @@
         }
     ],
 
+    "scripts": {
+        "test:unit": "phpunit -c phpunit.xml --testdox --colors=always"
+    },
+
     "autoload": {
-        "Bauhaus\\DbAsserture\\": "src/"
+        "psr-4": {
+            "Bauhaus\\DbAsserture\\": "src/"
+        }
     },
 
     "autoload-dev": {
-        "Bauhaus\\DbAsserture\\": "tests/"
+        "psr-4": {
+            "Bauhaus\\DbAsserture\\Tests\\": "tests/"
+        }
+    },
+
+    "required": {
+        "php": "^7.3"
     },
 
     "require-dev": {
