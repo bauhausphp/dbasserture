@@ -33,7 +33,7 @@ class InsertQueryTest extends TestCase
     /**
      * @test
      */
-    public function hasNothingToBind(): void
+    public function returnValuesToBeBound(): void
     {
         $this->assertEquals(self::REGISTER, $this->query->binds());
     }

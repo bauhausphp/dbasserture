@@ -59,7 +59,7 @@ class DatabaseTest extends TestCase
     /**
      * @test
      */
-    public function throwDatabasePrepareExceptionIfAnErrorOccursDuringPreparingQuery(): void
+    public function throwDatabasePrepareExceptionIfAnErrorOccursDuringQueryPreparation(): void
     {
         $query = $this->createInvalidQuery();
 
