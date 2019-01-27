@@ -4,6 +4,7 @@ namespace Bauhaus\DbAsserture\Tests;
 
 use Bauhaus\DbAsserture\Database;
 use Bauhaus\DbAsserture\DbAsserture;
+use Bauhaus\DbAsserture\Queries\InsertQuery;
 use Bauhaus\DbAsserture\Queries\TruncateQuery;
 use Bauhaus\DbAsserture\Query;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -26,16 +27,28 @@ class DbAssertureTest extends TestCase
     /**
      * @test
      */
+    public function insertRegisterByCallingDatabaseWithInsertQuery(): void
+    {
+        $query = new InsertQuery('table', ['field1' => 'value1']);
+
+        $this->expectDatabaseToBeCalledWith($query);
+
+        $this->dbAsserture->insertOne('table', ['field1' => 'value1']);
+    }
+
+    /**
+     * @test
+     */
     public function truncateTableByCallingDatabaseWithTruncateQuery(): void
     {
-        $truncateQuery = new TruncateQuery('table');
+        $query = new TruncateQuery('table');
 
-        $this->mockDatabaseToBeCalled($truncateQuery);
+        $this->expectDatabaseToBeCalledWith($query);
 
         $this->dbAsserture->cleanTable('table');
     }
 
-    private function mockDatabaseToBeCalled(Query $query): void
+    private function expectDatabaseToBeCalledWith(Query $query): void
     {
         $this->database
             ->expects($this->once())
