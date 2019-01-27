@@ -3,6 +3,8 @@
 namespace Bauhaus\DbAsserture\Tests\Queries;
 
 use Bauhaus\DbAsserture\Database;
+use Bauhaus\DbAsserture\DatabaseExecException;
+use Bauhaus\DbAsserture\DatabasePrepareException;
 use Bauhaus\DbAsserture\Query;
 use PDO;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -43,6 +45,30 @@ class DatabaseTest extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function throwDatabaseExecExceptionIfAnErrorOccursDuringQueryExecution(): void
+    {
+        $query = $this->createQueryWithWrongBinds();
+
+        $this->expectException(DatabaseExecException::class);
+
+        $this->database->exec($query);
+    }
+
+    /**
+     * @test
+     */
+    public function throwDatabasePrepareExceptionIfAnErrorOccursDuringPreparingQuery(): void
+    {
+        $query = $this->createInvalidQuery();
+
+        $this->expectException(DatabasePrepareException::class);
+
+        $this->database->exec($query);
+    }
+
+    /**
      * @param string|int[] $register
      */
     private function createQueryToInsert(array $register): Query
@@ -60,13 +86,43 @@ class DatabaseTest extends TestCase
         return $query;
     }
 
+    private function createQueryWithWrongBinds(): Query
+    {
+        /** @var Query|MockObject $query */
+        $query = $this->createMock(Query::class);
+
+        $query
+            ->method('__toString')
+            ->willReturn('SELECT * FROM `sample` WHERE id = :id');
+        $query
+            ->method('binds')
+            ->willReturn(['wrong' => 'value']);
+
+        return $query;
+    }
+
+    private function createInvalidQuery(): Query
+    {
+        /** @var Query|MockObject $query */
+        $query = $this->createMock(Query::class);
+
+        $query
+            ->method('__toString')
+            ->willReturn('INVALID');
+        $query
+            ->method('binds')
+            ->willReturn([]);
+
+        return $query;
+    }
+
     /**
      * @return string[]
      */
     private function fetchFirstLine(): array
     {
-        $sth = $this->pdo->query('SELECT * FROM `sample`');
+        $statement = $this->pdo->query('SELECT * FROM `sample`');
 
-        return $sth->fetch(PDO::FETCH_ASSOC);
+        return $statement->fetch(PDO::FETCH_ASSOC);
     }
 }

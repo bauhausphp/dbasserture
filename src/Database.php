@@ -3,6 +3,7 @@
 namespace Bauhaus\DbAsserture;
 
 use PDO;
+use PDOStatement;
 
 class Database
 {
@@ -16,8 +17,27 @@ class Database
 
     public function exec(Query $query): void
     {
-        $sth = $this->pdo->prepare((string) $query);
+        $statement = $this->prepare($query);
+        $this->execute($statement, $query);
+    }
 
-        $sth->execute($query->binds());
+    private function prepare(Query $query): PDOStatement
+    {
+        $statement = $this->pdo->prepare((string) $query);
+
+        if (false === $statement) {
+            throw new DatabasePrepareException($query);
+        }
+
+        return $statement;
+    }
+
+    private function execute(PDOStatement $statement, Query $query): void
+    {
+        $status = $statement->execute($query->binds());
+
+        if (false === $status) {
+            throw new DatabaseExecException($statement);
+        }
     }
 }
