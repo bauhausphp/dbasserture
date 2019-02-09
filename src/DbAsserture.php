@@ -3,6 +3,7 @@
 namespace Bauhaus\DbAsserture;
 
 use Bauhaus\DbAsserture\Queries\InsertQuery;
+use Bauhaus\DbAsserture\Queries\SelectQuery;
 use Bauhaus\DbAsserture\Queries\TruncateQuery;
 
 class DbAsserture
@@ -40,5 +41,17 @@ class DbAsserture
         $query = new TruncateQuery($table);
 
         $this->database->exec($query);
+    }
+
+    /**
+     * @param string|int[] $register
+     */
+    public function assertIsRegistered(string $table, array $register): bool
+    {
+        $query = new SelectQuery($table, $register);
+
+        $register = $this->database->query($query);
+
+        return count($register) > 0;
     }
 }

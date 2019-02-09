@@ -21,6 +21,14 @@ class Database
         $this->execute($statement, $query);
     }
 
+    public function query(Query $query): array
+    {
+        $statement = $this->prepare($query);
+        $this->execute($statement, $query);
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     private function prepare(Query $query): PDOStatement
     {
         $statement = $this->pdo->prepare((string) $query);

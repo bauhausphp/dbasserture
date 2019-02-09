@@ -2,6 +2,7 @@
 
 namespace Bauhaus\DbAsserture\Tests;
 
+use Bauhaus\DbAsserture\Queries\SelectQuery;
 use StdClass;
 use Bauhaus\DbAsserture\Database;
 use Bauhaus\DbAsserture\DbAsserture;
@@ -32,19 +33,20 @@ class DbAssertureTest extends TestCase
     {
         $query = new InsertQuery('table', ['field1' => 'value1']);
 
-        $this->expectDatabaseToBeCalledWith([$query]);
+        $this->expectDatabaseExecToBeCalledWith([$query]);
 
         $this->dbAsserture->insertOne('table', ['field1' => 'value1']);
     }
 
     /**
      * @test
+     * TODO insert more than one
      */
     public function insertManyRegistersByCallingDatabaseWithManyInsertQueries(): void
     {
         $query = new InsertQuery('table', ['field1' => 'value1']);
 
-        $this->expectDatabaseToBeCalledWith([$query]);
+        $this->expectDatabaseExecToBeCalledWith([$query]);
 
         $this->dbAsserture->insertMany('table', [
             ['field1' => 'value1'],
@@ -54,11 +56,24 @@ class DbAssertureTest extends TestCase
     /**
      * @test
      */
+    public function returnTrueIfAssertFindsRegisterInDatabase(): void
+    {
+        $query = new SelectQuery('table', ['field1' => 'value1']);
+        $this->expectDatabaseQueryToBeCalledToReturn($query, ['field1' => 'value1']);
+
+        $result = $this->dbAsserture->assertIsRegistered('table', ['field1' => 'value1']);
+
+        $this->assertTrue($result);
+    }
+
+    /**
+     * @test
+     */
     public function truncateTableByCallingDatabaseWithTruncateQuery(): void
     {
         $query = new TruncateQuery('table');
 
-        $this->expectDatabaseToBeCalledWith([$query]);
+        $this->expectDatabaseExecToBeCalledWith([$query]);
 
         $this->dbAsserture->cleanTable('table');
     }
@@ -66,7 +81,7 @@ class DbAssertureTest extends TestCase
     /**
      * @param Query[] $queries
      */
-    private function expectDatabaseToBeCalledWith(array $queries): void
+    private function expectDatabaseExecToBeCalledWith(array $queries): void
     {
         $count = count($queries);
 
@@ -74,5 +89,14 @@ class DbAssertureTest extends TestCase
             ->expects($this->exactly($count))
             ->method('exec')
             ->withConsecutive($queries);
+    }
+
+    private function expectDatabaseQueryToBeCalledToReturn($query, array $register): void
+    {
+        $this->database
+            ->expects($this->once())
+            ->method('query')
+            ->with($query)
+            ->willReturn($register);
     }
 }
