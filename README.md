@@ -13,7 +13,11 @@
 This is a tool for setting up and asserting in a integration test context.
 
 ```php
-$dbAsserture = DbAssertureFactory::create($driver, $host, $port, $name, $user, $pass);
+use Bauhaus\DbAsserture\DbAssertureFactory;
+use PDO;
+
+$pdo = new PDO(/* ... */);
+$dbAsserture = DbAssertureFactory::create($pdo);
 
 $dbAsserture->cleanTable('table_name');
 $dbAsserture->insertOne('table_name', ['id' => 1, 'name' => 'Name']);
