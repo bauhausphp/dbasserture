@@ -15,7 +15,7 @@ class InsertQuery extends AbstractQuery
 
     private function columns(): string
     {
-        return implode(',', $this->fields());
+        return '`'.implode('`,`', $this->fields()).'`';
     }
 
     private function valuesToBind(): string

@@ -25,7 +25,7 @@ class InsertQueryTest extends TestCase
      */
     public function isConvertedIntoInsertQueryWithTheProvidedTableAndRegisterFields(): void
     {
-        $expected = 'INSERT INTO `table` (field1,field2) VALUES (:field1,:field2)';
+        $expected = 'INSERT INTO `table` (`field1`,`field2`) VALUES (:field1,:field2)';
 
         $this->assertEquals($expected, (string) $this->query);
     }

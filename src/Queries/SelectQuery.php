@@ -16,7 +16,7 @@ class SelectQuery extends AbstractQuery
     {
         $wheres = [];
         foreach ($this->fields() as $field) {
-            $wheres[] = "$field = :$field";
+            $wheres[] = "`$field` = :$field";
         }
 
         return implode(' AND ', $wheres);
