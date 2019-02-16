@@ -2,6 +2,7 @@
 
 namespace Bauhaus\DbAsserture;
 
+use Bauhaus\DbAsserture\Queries\Query;
 use RuntimeException;
 
 class DatabasePrepareException extends RuntimeException

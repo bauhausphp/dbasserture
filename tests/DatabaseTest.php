@@ -1,11 +1,11 @@
 <?php
 
-namespace Bauhaus\DbAsserture\Tests\Queries;
+namespace Bauhaus\DbAsserture\Tests;
 
 use Bauhaus\DbAsserture\Database;
 use Bauhaus\DbAsserture\DatabaseExecException;
 use Bauhaus\DbAsserture\DatabasePrepareException;
-use Bauhaus\DbAsserture\Query;
+use Bauhaus\DbAsserture\Queries\Query;
 use PDO;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

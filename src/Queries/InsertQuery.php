@@ -6,28 +6,16 @@ class InsertQuery extends AbstractQuery
 {
     public function __toString(): string
     {
-        $table = $this->table();
-        $columns = $this->columns();
-        $valuesToBind = $this->valuesToBind();
-
-        return "INSERT INTO `{$table}` ($columns) VALUES ($valuesToBind)";
+        return "INSERT INTO {$this->table()} ({$this->columns()}) VALUES ({$this->params()})";
     }
 
     private function columns(): string
     {
-        return '`'.implode('`,`', $this->fields()).'`';
+        return implode(',', $this->register()->columns());
     }
 
-    private function valuesToBind(): string
+    private function params(): string
     {
-        return ':'.implode(',:', $this->fields());
-    }
-
-    /**
-     * @return string[]
-     */
-    private function fields(): array
-    {
-        return array_keys($this->register());
+        return implode(',', $this->register()->queryParams());
     }
 }

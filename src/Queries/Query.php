@@ -1,13 +1,13 @@
 <?php
 
-namespace Bauhaus\DbAsserture;
+namespace Bauhaus\DbAsserture\Queries;
 
 interface Query
 {
     public function __toString(): string;
 
     /**
-     * @return string|int[]
+     * @return null|string|int[]
      */
     public function binds(): array;
 }

@@ -2,14 +2,15 @@
 
 namespace Bauhaus\DbAsserture\Queries;
 
-use Bauhaus\DbAsserture\Query;
+use Bauhaus\DbAsserture\Sql\Register;
+use Bauhaus\DbAsserture\Sql\Table;
 
 abstract class AbstractQuery implements Query
 {
-    /** @var string */
+    /** @var Table */
     private $table;
 
-    /** @var string|int[] */
+    /** @var Register */
     private $register;
 
     /**
@@ -17,27 +18,24 @@ abstract class AbstractQuery implements Query
      */
     public function __construct(string $table, array $register)
     {
-        $this->table = $table;
-        $this->register = $register;
+        $this->table = new Table($table);
+        $this->register = new Register($register);
     }
 
     /**
-     * @param string|int[] $register
+     * {@inheritdoc}
      */
     public function binds(): array
     {
-        return $this->register;
+        return $this->register->queryBinds();
     }
 
-    protected function table(): string
+    protected function table(): Table
     {
         return $this->table;
     }
 
-    /**
-     * @param string|int[] $register
-     */
-    protected function register(): array
+    protected function register(): Register
     {
         return $this->register;
     }

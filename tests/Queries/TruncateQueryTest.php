@@ -10,11 +10,13 @@ class TruncateQueryTest extends TestCase
     /**
      * @test
      */
-    public function isConvertedIntoTruncateQueryWithTheProvidedTable(): void
+    public function isConvertedIntoTruncateQueryWithTheTableEscaped(): void
     {
         $truncateQuery = new TruncateQuery('table');
 
-        $this->assertEquals('TRUNCATE `table`', (string) $truncateQuery);
+        $query = (string) $truncateQuery;
+
+        $this->assertEquals('TRUNCATE `table`', $query);
     }
 
     /**
