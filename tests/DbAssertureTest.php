@@ -2,13 +2,12 @@
 
 namespace Bauhaus\DbAsserture\Tests;
 
-use Bauhaus\DbAsserture\Queries\SelectQuery;
-use StdClass;
 use Bauhaus\DbAsserture\Database;
 use Bauhaus\DbAsserture\DbAsserture;
 use Bauhaus\DbAsserture\Queries\InsertQuery;
+use Bauhaus\DbAsserture\Queries\Query;
+use Bauhaus\DbAsserture\Queries\SelectQuery;
 use Bauhaus\DbAsserture\Queries\TruncateQuery;
-use Bauhaus\DbAsserture\Queries;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

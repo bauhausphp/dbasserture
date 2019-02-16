@@ -18,16 +18,26 @@ class Database
 
     public function exec(Query $query): void
     {
-        $statement = $this->prepare($query);
-        $this->execute($statement, $query);
+        $this->execute($query);
     }
 
     public function query(Query $query): array
     {
-        $statement = $this->prepare($query);
-        $this->execute($statement, $query);
+        $statement = $this->execute($query);
 
         return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    private function execute(Query $query): PDOStatement
+    {
+        $statement = $this->prepare($query);
+        $status = $statement->execute($query->binds());
+
+        if (false === $status) {
+            throw new DatabaseExecException($statement);
+        }
+
+        return $statement;
     }
 
     private function prepare(Query $query): PDOStatement
@@ -39,14 +49,5 @@ class Database
         }
 
         return $statement;
-    }
-
-    private function execute(PDOStatement $statement, Query $query): void
-    {
-        $status = $statement->execute($query->binds());
-
-        if (false === $status) {
-            throw new DatabaseExecException($statement);
-        }
     }
 }

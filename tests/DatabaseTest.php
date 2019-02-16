@@ -119,6 +119,14 @@ class DatabaseTest extends TestCase
     /**
      * @return string[]
      */
+    private function insertLine(string $id, string $name): void
+    {
+        $this->pdo->exec("INSERT INTO `sample` (`id`, `name`) VALUES ($id, '$name')");
+    }
+
+    /**
+     * @return string[]
+     */
     private function fetchFirstLine(): array
     {
         $statement = $this->pdo->query('SELECT * FROM `sample`');
