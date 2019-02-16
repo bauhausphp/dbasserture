@@ -3,6 +3,7 @@
 namespace Bauhaus\DbAsserture;
 
 use Bauhaus\DbAsserture\Queries\Query;
+use Bauhaus\DbAsserture\Sql\Register;
 use PDO;
 use PDOStatement;
 
@@ -25,7 +26,7 @@ class Database
     {
         $statement = $this->execute($query);
 
-        return $statement->fetchAll(PDO::FETCH_ASSOC);
+        return $this->createRegisters($statement);
     }
 
     private function execute(Query $query): PDOStatement
@@ -49,5 +50,18 @@ class Database
         }
 
         return $statement;
+    }
+
+    /**
+     * @return Register[]
+     */
+    private function createRegisters(PDOStatement $statement): array
+    {
+        $registers = [];
+        foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $register) {
+            $registers[] = new Register($register);
+        }
+
+        return $registers;
     }
 }

@@ -6,6 +6,7 @@ use Bauhaus\DbAsserture\Database;
 use Bauhaus\DbAsserture\DatabaseExecException;
 use Bauhaus\DbAsserture\DatabasePrepareException;
 use Bauhaus\DbAsserture\Queries\Query;
+use Bauhaus\DbAsserture\Sql\Register;
 use PDO;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -47,6 +48,24 @@ class DatabaseTest extends TestCase
     /**
      * @test
      */
+    public function queryRegistersAccordingToDatabaseSetUp(): void
+    {
+        $this->insertLine(1, 'Jane');
+        $this->insertLine(2, 'John');
+        $query = $this->createQueryToSelectAll();
+
+        $registers = $this->database->query($query);
+
+        $expected = [
+            new Register(['id' => 1, 'name' => 'Jane']),
+            new Register(['id' => 2, 'name' => 'John']),
+        ];
+        $this->assertEquals($expected, $registers);
+    }
+
+    /**
+     * @test
+     */
     public function throwDatabaseExecExceptionIfAnErrorOccursDuringQueryExecution(): void
     {
         $query = $this->createQueryWithWrongBinds();
@@ -82,6 +101,21 @@ class DatabaseTest extends TestCase
         $query
             ->method('binds')
             ->willReturn($register);
+
+        return $query;
+    }
+
+    private function createQueryToSelectAll(): Query
+    {
+        /** @var Query|MockObject $query */
+        $query = $this->createMock(Query::class);
+
+        $query
+            ->method('__toString')
+            ->willReturn('SELECT * FROM `sample`');
+        $query
+            ->method('binds')
+            ->willReturn([]);
 
         return $query;
     }
