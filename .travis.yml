@@ -5,11 +5,10 @@ php:
 
 install:
    - composer install
-   - mkdir -p build/logs
 
 script:
-   - composer run test:unit -- --coverage-clover build/logs/clover.xml
+   - composer run test:unit -- --coverage-clover ./clover.xml
 
 after_success:
    - composer require --dev satooshi/php-coveralls:1.*
-   - vendor/bin/coveralls -v --coverage_clover=build/logs/clover.xml
+   - vendor/bin/coveralls -v --coverage_clover=./clover.xml
