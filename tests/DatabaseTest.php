@@ -13,8 +13,6 @@ use PHPUnit\Framework\TestCase;
 
 class DatabaseTest extends TestCase
 {
-    private const DB_PATH = __DIR__.'/db.sqlite';
-
     /** @var Database */
     private $database;
 
@@ -23,9 +21,7 @@ class DatabaseTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->pdo = new PDO('sqlite:'.self::DB_PATH);
-
-        $this->pdo->exec('DROP TABLE `sample`');
+        $this->pdo = new PDO('sqlite::memory:');
         $this->pdo->exec('CREATE TABLE `sample` (id INTEGER, name VARCHAR(255))');
 
         $this->database = new Database($this->pdo);
@@ -34,7 +30,7 @@ class DatabaseTest extends TestCase
     /**
      * @test
      */
-    public function callPdoUsingProvidedQuery(): void
+    public function execQueryByCallingPdo(): void
     {
         $expectedRegister = ['id' => 1, 'name' => 'Name'];
         $query = $this->createQueryToInsert($expectedRegister);

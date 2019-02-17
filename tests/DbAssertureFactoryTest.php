@@ -10,14 +10,13 @@ use PHPUnit\Framework\TestCase;
 
 class DbAssertureFactoryTest extends TestCase
 {
-    private const DB_PATH = __DIR__.'/db.sqlite';
-
     /**
      * @test
      */
     public function staticallyCreateDbAsserture(): void
     {
-        $pdo = new PDO('sqlite:'.self::DB_PATH);
+        /** @var PDO $pdo */
+        $pdo = $this->createMock(PDO::class);
         $expected = new DbAsserture(new Database($pdo));
 
         $dbAsserture = DbAssertureFactory::create($pdo);
