@@ -2,7 +2,7 @@
 
 namespace Bauhaus\DbAsserture\Sql;
 
-abstract class EscapedToken
+class EscapedToken
 {
     /** @var string */
     private $token;
@@ -12,12 +12,7 @@ abstract class EscapedToken
         $this->token = $token;
     }
 
-    public function raw(): string
-    {
-        return $this->token;
-    }
-
-    protected function escaped(): string
+    public function __toString(): string
     {
         return "`{$this->token}`";
     }

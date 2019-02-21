@@ -2,10 +2,18 @@
 
 namespace Bauhaus\DbAsserture\Sql;
 
-class Table extends EscapedToken
+class Table
 {
+    /** @var string */
+    private $name;
+
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
+
     public function __toString(): string
     {
-        return $this->escaped();
+        return new EscapedToken($this->name);
     }
 }

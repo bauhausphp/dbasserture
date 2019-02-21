@@ -35,6 +35,11 @@ class SelectQueryTest extends TestCase
      */
     public function returnValuesToBeBound(): void
     {
-        $this->assertEquals(self::REGISTER, $this->query->binds());
+        $expected = [
+            ':field1' => 'value1',
+            ':field2' => 'value2',
+        ];
+
+        $this->assertEquals($expected, $this->query->binds());
     }
 }

@@ -2,25 +2,56 @@
 
 namespace Bauhaus\DbAsserture\Sql;
 
-class Field extends EscapedToken
+class Field
 {
+    /** @var string */
+    private $name;
+
     /** @var string */
     private $value;
 
-    public function __construct(string $name, string $value)
-    {
-        $this->value = $value;
+    /** @var bool */
+    private $bindable;
 
-        parent::__construct($name);
+    private function __construct(string $name, string $value, bool $bindable)
+    {
+        $this->name = $name;
+        $this->value = $value;
+        $this->bindable = $bindable;
+    }
+
+    public function name(): string
+    {
+        return $this->name;
     }
 
     public function escapedName(): string
     {
-        return $this->escaped();
+        return new EscapedToken($this->name());
+    }
+
+    public function value(): string
+    {
+        return $this->value;
     }
 
     public function queryParam(): string
     {
-        return ":{$this->raw()}";
+        return $this->isBindable() ? ":{$this->name()}" : $this->value();
+    }
+
+    public function isBindable(): bool
+    {
+        return $this->bindable;
+    }
+
+    /**
+     * @param string|SqlExpression $value
+     */
+    public static function create(string $name, $value): self
+    {
+        $isBindable = !$value instanceof SqlExpression;
+
+        return new self($name, $value, $isBindable);
     }
 }

@@ -7,27 +7,38 @@ class Register
     /** @var Field[] */
     private $fields = [];
 
-    /** @var null|string|int[] */
-    private $register;
-
-    /**
-     * @param null|string|int[] $register
-     */
     public function __construct(array $register)
     {
-        $this->register = $register;
-
-        foreach ($this->register as $field => $value) {
-            $this->fields[] = new Field($field, $value);
+        foreach ($register as $field => $value) {
+            $this->fields[] = Field::create($field, $value);
         }
     }
 
+    public function __toString(): string
+    {
+        $fields = [];
+        foreach ($this->fields as $field) {
+            $fields[] = "{$field->name()} => {$field->value()}";
+        }
+
+        return implode(', ', $fields);
+    }
+
     /**
-     * @return null|string|int[]
+     * @return string[]
      */
     public function queryBinds(): array
     {
-        return $this->register;
+        $bindableFields = array_filter($this->fields, function (Field $field) {
+            return $field->isBindable();
+        });
+
+        $binds = [];
+        foreach ($bindableFields as $field) {
+            $binds[$field->queryParam()] = $field->value();
+        }
+
+        return $binds;
     }
 
     /**

@@ -4,10 +4,12 @@ namespace Bauhaus\DbAsserture\Tests;
 
 use Bauhaus\DbAsserture\Database;
 use Bauhaus\DbAsserture\DbAsserture;
+use Bauhaus\DbAsserture\DbAssertureOneIsRegisteredFailedException;
 use Bauhaus\DbAsserture\Queries\InsertQuery;
 use Bauhaus\DbAsserture\Queries\Query;
 use Bauhaus\DbAsserture\Queries\SelectQuery;
 use Bauhaus\DbAsserture\Queries\TruncateQuery;
+use Bauhaus\DbAsserture\Sql\Register;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -32,7 +34,7 @@ class DbAssertureTest extends TestCase
     {
         $query = new InsertQuery('table', ['field1' => 'value1']);
 
-        $this->expectDatabaseExecToBeCalledWith([$query]);
+        $this->mockDatabaseExecToBeCalledOnceWith($query);
 
         $this->dbAsserture->insertOne('table', ['field1' => 'value1']);
     }
@@ -45,7 +47,7 @@ class DbAssertureTest extends TestCase
     {
         $query = new InsertQuery('table', ['field1' => 'value1']);
 
-        $this->expectDatabaseExecToBeCalledWith([$query]);
+        $this->mockDatabaseExecToBeCalledWith([$query]);
 
         $this->dbAsserture->insertMany('table', [
             ['field1' => 'value1'],
@@ -55,12 +57,24 @@ class DbAssertureTest extends TestCase
     /**
      * @test
      */
+    public function truncateTableByCallingDatabaseWithTruncateQuery(): void
+    {
+        $query = new TruncateQuery('table');
+
+        $this->mockDatabaseExecToBeCalledOnceWith($query);
+
+        $this->dbAsserture->cleanTable('table');
+    }
+
+    /**
+     * @test
+     */
     public function returnTrueIfAssertFindsRegisterInDatabase(): void
     {
         $query = new SelectQuery('table', ['field1' => 'value1']);
-        $this->expectDatabaseQueryToBeCalledToReturn($query, ['field1' => 'value1']);
+        $this->mockDatabaseQueryToReturnOneRegister($query, ['field1' => 'value1']);
 
-        $result = $this->dbAsserture->assertIsRegistered('table', ['field1' => 'value1']);
+        $result = $this->dbAsserture->assertOneIsRegistered('table', ['field1' => 'value1']);
 
         $this->assertTrue($result);
     }
@@ -68,19 +82,41 @@ class DbAssertureTest extends TestCase
     /**
      * @test
      */
-    public function truncateTableByCallingDatabaseWithTruncateQuery(): void
+    public function throwAssertOneIsRegisteredFailedExceptionIfDatabaseReturnsNoRegister(): void
     {
-        $query = new TruncateQuery('table');
+        $query = new SelectQuery('table', ['field1' => 'value1']);
+        $this->mockDatabaseQueryToReturnNoRegister($query);
 
-        $this->expectDatabaseExecToBeCalledWith([$query]);
+        $this->expectException(DbAssertureOneIsRegisteredFailedException::class);
 
-        $this->dbAsserture->cleanTable('table');
+        $this->dbAsserture->assertOneIsRegistered('table', ['field1' => 'value1']);
+    }
+
+    /**
+     * @test
+     */
+    public function throwAssertOneIsRegisteredFailedExceptionIfDatabaseReturnsManyRegisters(): void
+    {
+        $query = new SelectQuery('table', ['field1' => 'value1']);
+        $this->mockDatabaseQueryToReturnManyRegisters($query, [
+            ['field1' => 'value1'],
+            ['field1' => 'value2'],
+        ]);
+
+        $this->expectException(DbAssertureOneIsRegisteredFailedException::class);
+
+        $this->dbAsserture->assertOneIsRegistered('table', ['field1' => 'value1']);
+    }
+
+    private function mockDatabaseExecToBeCalledOnceWith(Query $query): void
+    {
+        $this->mockDatabaseExecToBeCalledWith([$query]);
     }
 
     /**
      * @param Query[] $queries
      */
-    private function expectDatabaseExecToBeCalledWith(array $queries): void
+    private function mockDatabaseExecToBeCalledWith(array $queries): void
     {
         $count = count($queries);
 
@@ -90,12 +126,35 @@ class DbAssertureTest extends TestCase
             ->withConsecutive($queries);
     }
 
-    private function expectDatabaseQueryToBeCalledToReturn($query, array $register): void
+    private function mockDatabaseQueryToReturnOneRegister(Query $query, array $register): void
+    {
+        $this->mockDatabaseQueryToReturnManyRegisters($query, [$register]);
+    }
+
+    private function mockDatabaseQueryToReturnManyRegisters(Query $query, array $registers): void
+    {
+        /** @var Register[] $registers */
+        $registers = array_map(function (array $register) {
+            return new Register($register);
+        }, $registers);
+
+        $this->mockDatabaseQueryToBeCalledAndReturn($query, $registers);
+    }
+
+    private function mockDatabaseQueryToReturnNoRegister(Query $query): void
+    {
+        $this->mockDatabaseQueryToBeCalledAndReturn($query, []);
+    }
+
+    /**
+     * @param Register[] $registers
+     */
+    private function mockDatabaseQueryToBeCalledAndReturn(Query $query, array $registers): void
     {
         $this->database
             ->expects($this->once())
             ->method('query')
             ->with($query)
-            ->willReturn($register);
+            ->willReturn($registers);
     }
 }

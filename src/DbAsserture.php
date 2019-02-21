@@ -46,12 +46,16 @@ class DbAsserture
     /**
      * @param string|int[] $register
      */
-    public function assertIsRegistered(string $table, array $register): bool
+    public function assertOneIsRegistered(string $table, array $register): bool
     {
         $query = new SelectQuery($table, $register);
 
-        $register = $this->database->query($query);
+        $registers = $this->database->query($query);
 
-        return count($register) > 0;
+        if (count($registers) !== 1) {
+            throw new DbAssertureOneIsRegisteredFailedException($query, $registers);
+        }
+
+        return true;
     }
 }
