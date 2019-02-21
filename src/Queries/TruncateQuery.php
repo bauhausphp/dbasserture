@@ -11,6 +11,6 @@ class TruncateQuery extends AbstractQuery
 
     public function __toString(): string
     {
-        return "TRUNCATE {$this->table()}";
+        return "TRUNCATE {$this->table()} CASCADE";
     }
 }
