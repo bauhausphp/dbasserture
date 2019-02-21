@@ -27,7 +27,7 @@ class RegisterTest extends TestCase
     {
         $columns = $this->register->columns();
 
-        $this->assertEquals(['`id`', '`name`', '`extra`'], $columns);
+        $this->assertEquals(['id', 'name', 'extra'], $columns);
     }
 
     /**

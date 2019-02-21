@@ -25,11 +25,6 @@ class Field
         return $this->name;
     }
 
-    public function escapedName(): string
-    {
-        return new EscapedToken($this->name());
-    }
-
     public function value(): string
     {
         return $this->value;

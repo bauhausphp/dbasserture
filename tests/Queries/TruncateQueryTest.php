@@ -16,7 +16,7 @@ class TruncateQueryTest extends TestCase
 
         $query = (string) $truncateQuery;
 
-        $this->assertEquals('TRUNCATE `table` CASCADE', $query);
+        $this->assertEquals('TRUNCATE table CASCADE', $query);
     }
 
     /**

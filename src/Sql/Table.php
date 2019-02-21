@@ -14,6 +14,6 @@ class Table
 
     public function __toString(): string
     {
-        return new EscapedToken($this->name);
+        return $this->name;
     }
 }

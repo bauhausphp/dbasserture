@@ -47,7 +47,7 @@ class Register
     public function columns(): array
     {
         $mapper = function (Field $field) {
-            return $field->escapedName();
+            return $field->name();
         };
 
         return array_map($mapper, $this->fields);
