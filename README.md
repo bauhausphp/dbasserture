@@ -6,11 +6,10 @@
 [![Total Downloads](https://poser.pugx.org/bauhaus/dbasserture/downloads?format=flat-square)](https://packagist.org/packages/bauhaus/dbasserture)
 [![composer.lock](https://poser.pugx.org/bauhaus/dbasserture/composerlock?format=flat-square)](https://packagist.org/packages/bauhaus/dbasserture)
 
-> **Warning!** This package won't worry about backward compatibily for `v0.*`.
-
 # DB Asserture
 
-This is a tool for setting up and asserting in a integration test context.
+This tool was created to help the DB setup and assertion in a integration tests
+context.
 
 ```php
 use Bauhaus\DbAsserture\DbAssertureFactory;
