@@ -16,7 +16,10 @@ class SelectQuery extends AbstractQuery
 
         $wheres = [];
         foreach ($columns as $i => $column) {
-            $wheres[] = "$column = {$queryParams[$i]}";
+            $param = $queryParams[$i];
+            $compare = $param ? "= {$queryParams[$i]}" : 'IS NULL';
+
+            $wheres[] = "$column $compare";
         }
 
         return implode(' AND ', $wheres);

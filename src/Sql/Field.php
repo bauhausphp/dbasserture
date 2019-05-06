@@ -7,13 +7,13 @@ class Field
     /** @var string */
     private $name;
 
-    /** @var string */
+    /** @var string|null */
     private $value;
 
     /** @var bool */
     private $bindable;
 
-    private function __construct(string $name, string $value, bool $bindable)
+    private function __construct(string $name, ?string $value, bool $bindable)
     {
         $this->name = $name;
         $this->value = $value;
@@ -25,12 +25,12 @@ class Field
         return $this->name;
     }
 
-    public function value(): string
+    public function value(): ?string
     {
         return $this->value;
     }
 
-    public function queryParam(): string
+    public function queryParam(): ?string
     {
         return $this->isBindable() ? ":{$this->name()}" : $this->value();
     }
@@ -45,7 +45,9 @@ class Field
      */
     public static function create(string $name, $value): self
     {
-        $isBindable = !$value instanceof SqlExpression;
+        $notSqlExpression = !$value instanceof SqlExpression;
+        $notNull = is_null($value) === false;
+        $isBindable = $notSqlExpression && $notNull;
 
         return new self($name, $value, $isBindable);
     }
