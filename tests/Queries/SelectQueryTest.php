@@ -9,7 +9,7 @@ class SelectQueryTest extends TestCase
 {
     private const REGISTER = [
         'field1' => 'value1',
-        'field2' => 'value2',
+        'field2' => null,
     ];
 
     /** @var SelectQuery */
@@ -25,7 +25,7 @@ class SelectQueryTest extends TestCase
      */
     public function isConvertedIntoSelectQueryWithTheProvidedTableAndValuesToFilter(): void
     {
-        $expected = 'SELECT * FROM table WHERE field1 = :field1 AND field2 = :field2';
+        $expected = 'SELECT * FROM table WHERE field1 = :field1 AND field2 IS NULL';
 
         $this->assertEquals($expected, (string) $this->query);
     }
@@ -37,7 +37,6 @@ class SelectQueryTest extends TestCase
     {
         $expected = [
             ':field1' => 'value1',
-            ':field2' => 'value2',
         ];
 
         $this->assertEquals($expected, $this->query->binds());
