@@ -1,13 +1,13 @@
 <?php
 
-namespace Bauhaus\DbAsserture;
+namespace Bauhaus\DbAsserture\DbConnection;
 
 use Bauhaus\DbAsserture\Queries\Query;
 use Bauhaus\DbAsserture\Sql\Register;
 use PDO;
 use PDOStatement;
 
-class Database
+class DbConnection
 {
     private PDO $pdo;
 
@@ -34,7 +34,7 @@ class Database
         $status = $statement->execute($query->binds());
 
         if (false === $status) {
-            throw new DatabaseExecException($statement);
+            throw new DbExecException($statement);
         }
 
         return $statement;
@@ -45,7 +45,7 @@ class Database
         $statement = $this->pdo->prepare((string) $query);
 
         if (false === $statement) {
-            throw new DatabasePrepareException($query);
+            throw new DbPrepareException($query);
         }
 
         return $statement;

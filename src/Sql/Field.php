@@ -4,14 +4,9 @@ namespace Bauhaus\DbAsserture\Sql;
 
 class Field
 {
-    /** @var string */
-    private $name;
-
-    /** @var string|null */
-    private $value;
-
-    /** @var bool */
-    private $bindable;
+    private string $name;
+    private ?string $value;
+    private bool $bindable;
 
     private function __construct(string $name, ?string $value, bool $bindable)
     {

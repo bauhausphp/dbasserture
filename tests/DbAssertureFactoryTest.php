@@ -1,10 +1,8 @@
 <?php
 
-namespace Bauhaus\DbAsserture\Tests;
+namespace Bauhaus\DbAsserture;
 
-use Bauhaus\DbAsserture\DbAssertureFactory;
-use Bauhaus\DbAsserture\Database;
-use Bauhaus\DbAsserture\DbAsserture;
+use Bauhaus\DbAsserture\DbConnection\DbConnection;
 use PDO;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +14,7 @@ class DbAssertureFactoryTest extends TestCase
     public function staticallyCreateDbAsserture(): void
     {
         $pdo = $this->createMock(PDO::class);
-        $expected = new DbAsserture(new Database($pdo));
+        $expected = new DbAsserture(new DbConnection($pdo));
 
         $dbAsserture = DbAssertureFactory::create($pdo);
 

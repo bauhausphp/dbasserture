@@ -1,30 +1,23 @@
 <?php
 
-namespace Bauhaus\DbAsserture\Tests;
+namespace Bauhaus\DbAsserture\DbConnection;
 
-use Bauhaus\DbAsserture\Database;
-use Bauhaus\DbAsserture\DatabaseExecException;
-use Bauhaus\DbAsserture\DatabasePrepareException;
 use Bauhaus\DbAsserture\Queries\Query;
 use Bauhaus\DbAsserture\Sql\Register;
 use PDO;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class DatabaseTest extends TestCase
+class DbConnectionTest extends TestCase
 {
-    /** @var Database */
-    private $database;
-
-    /** @var PDO */
-    private $pdo;
+    private DbConnection $database;
+    private PDO $pdo;
 
     protected function setUp(): void
     {
         $this->pdo = new PDO('sqlite::memory:');
         $this->pdo->exec('CREATE TABLE `sample` (id INTEGER, name VARCHAR(255))');
 
-        $this->database = new Database($this->pdo);
+        $this->database = new DbConnection($this->pdo);
     }
 
     /**
@@ -66,7 +59,7 @@ class DatabaseTest extends TestCase
     {
         $query = $this->createQueryWithWrongBinds();
 
-        $this->expectException(DatabaseExecException::class);
+        $this->expectException(DbExecException::class);
 
         $this->database->exec($query);
     }
@@ -78,7 +71,7 @@ class DatabaseTest extends TestCase
     {
         $query = $this->createInvalidQuery();
 
-        $this->expectException(DatabasePrepareException::class);
+        $this->expectException(DbPrepareException::class);
 
         $this->database->exec($query);
     }
@@ -88,7 +81,6 @@ class DatabaseTest extends TestCase
      */
     private function createQueryToInsert(array $register): Query
     {
-        /** @var Query|MockObject $query */
         $query = $this->createMock(Query::class);
 
         $query
@@ -103,7 +95,6 @@ class DatabaseTest extends TestCase
 
     private function createQueryToSelectAll(): Query
     {
-        /** @var Query|MockObject $query */
         $query = $this->createMock(Query::class);
 
         $query
@@ -118,7 +109,6 @@ class DatabaseTest extends TestCase
 
     private function createQueryWithWrongBinds(): Query
     {
-        /** @var Query|MockObject $query */
         $query = $this->createMock(Query::class);
 
         $query
@@ -133,7 +123,6 @@ class DatabaseTest extends TestCase
 
     private function createInvalidQuery(): Query
     {
-        /** @var Query|MockObject $query */
         $query = $this->createMock(Query::class);
 
         $query

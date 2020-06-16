@@ -1,9 +1,7 @@
 <?php
 
-namespace Bauhaus\DbAsserture\Tests\Sql;
+namespace Bauhaus\DbAsserture\Sql;
 
-use Bauhaus\DbAsserture\Sql\Register;
-use Bauhaus\DbAsserture\Sql\SqlExpression;
 use PHPUnit\Framework\TestCase;
 
 class RegisterTest extends TestCase

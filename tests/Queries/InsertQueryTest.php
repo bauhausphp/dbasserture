@@ -1,8 +1,7 @@
 <?php
 
-namespace Bauhaus\DbAsserture\Tests\Queries;
+namespace Bauhaus\DbAsserture\Queries;
 
-use Bauhaus\DbAsserture\Queries\InsertQuery;
 use PHPUnit\Framework\TestCase;
 
 class InsertQueryTest extends TestCase

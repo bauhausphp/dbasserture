@@ -1,10 +1,8 @@
 <?php
 
-namespace Bauhaus\DbAsserture\Tests;
+namespace Bauhaus\DbAsserture;
 
-use Bauhaus\DbAsserture\Database;
-use Bauhaus\DbAsserture\DbAsserture;
-use Bauhaus\DbAsserture\DbAssertureOneIsRegisteredFailedException;
+use Bauhaus\DbAsserture\DbConnection\DbConnection;
 use Bauhaus\DbAsserture\Queries\InsertQuery;
 use Bauhaus\DbAsserture\Queries\Query;
 use Bauhaus\DbAsserture\Queries\SelectQuery;
@@ -15,11 +13,11 @@ use PHPUnit\Framework\TestCase;
 class DbAssertureTest extends TestCase
 {
     private DbAsserture $dbAsserture;
-    private Database $database;
+    private DbConnection $database;
 
     protected function setUp(): void
     {
-        $this->database = $this->createMock(Database::class);
+        $this->database = $this->createMock(DbConnection::class);
         $this->dbAsserture = new DbAsserture($this->database);
     }
 
