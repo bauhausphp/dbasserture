@@ -24,7 +24,7 @@ class SelectQueryTest extends TestCase
      */
     public function isConvertedIntoSelectQueryWithTheProvidedTableAndValuesToFilter(): void
     {
-        $expected = 'SELECT * FROM table WHERE field1 = :field1 AND field2 IS NULL';
+        $expected = 'SELECT * FROM table WHERE field1 = :field1 AND field2 = NULL';
 
         $this->assertEquals($expected, (string) $this->query);
     }
