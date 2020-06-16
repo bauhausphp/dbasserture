@@ -1,10 +1,7 @@
 <?php
 
-namespace Bauhaus\DbAsserture\Tests\DbConnection;
+namespace Bauhaus\DbAsserture\DbConnection;
 
-use Bauhaus\DbAsserture\DbConnection\DbConnection;
-use Bauhaus\DbAsserture\DbConnection\DbExecException;
-use Bauhaus\DbAsserture\DbConnection\DbPrepareException;
 use Bauhaus\DbAsserture\Queries\Query;
 use Bauhaus\DbAsserture\Sql\Register;
 use PDO;

@@ -1,10 +1,8 @@
 <?php
 
-namespace Bauhaus\DbAsserture\Tests;
+namespace Bauhaus\DbAsserture;
 
 use Bauhaus\DbAsserture\DbConnection\DbConnection;
-use Bauhaus\DbAsserture\DbAsserture;
-use Bauhaus\DbAsserture\DbAssertureOneIsRegisteredFailedException;
 use Bauhaus\DbAsserture\Queries\InsertQuery;
 use Bauhaus\DbAsserture\Queries\Query;
 use Bauhaus\DbAsserture\Queries\SelectQuery;

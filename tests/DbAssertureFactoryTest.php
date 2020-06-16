@@ -1,10 +1,8 @@
 <?php
 
-namespace Bauhaus\DbAsserture\Tests;
+namespace Bauhaus\DbAsserture;
 
-use Bauhaus\DbAsserture\DbAssertureFactory;
 use Bauhaus\DbAsserture\DbConnection\DbConnection;
-use Bauhaus\DbAsserture\DbAsserture;
 use PDO;
 use PHPUnit\Framework\TestCase;
 
