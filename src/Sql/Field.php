@@ -27,7 +27,7 @@ class Field
 
     public function value(): ?string
     {
-        return $this->value;
+        return is_null($this->value) ? 'NULL' : $this->value;
     }
 
     public function queryParam(): ?string
