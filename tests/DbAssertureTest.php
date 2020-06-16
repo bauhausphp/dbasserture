@@ -10,16 +10,12 @@ use Bauhaus\DbAsserture\Queries\Query;
 use Bauhaus\DbAsserture\Queries\SelectQuery;
 use Bauhaus\DbAsserture\Queries\TruncateQuery;
 use Bauhaus\DbAsserture\Sql\Register;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DbAssertureTest extends TestCase
 {
-    /** @var DbAsserture */
-    private $dbAsserture;
-
-    /** @var Database|MockObject */
-    private $database;
+    private DbAsserture $dbAsserture;
+    private Database $database;
 
     protected function setUp(): void
     {

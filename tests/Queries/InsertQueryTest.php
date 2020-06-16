@@ -12,8 +12,7 @@ class InsertQueryTest extends TestCase
         'field2' => 'value2',
     ];
 
-    /** @var InsertQuery */
-    private $query;
+    private InsertQuery $query;
 
     protected function setUp(): void
     {

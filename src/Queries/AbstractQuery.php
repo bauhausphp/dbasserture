@@ -7,11 +7,9 @@ use Bauhaus\DbAsserture\Sql\Table;
 
 abstract class AbstractQuery implements Query
 {
-    /** @var Table */
-    private $table;
+    private Table $table;
 
-    /** @var Register */
-    private $register;
+    private Register $register;
 
     /**
      * @param string|int[] $register
