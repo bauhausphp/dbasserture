@@ -2,15 +2,16 @@
 
 namespace Bauhaus\DbAsserture;
 
+use Bauhaus\DbAsserture\DbConnection\DbConnection;
 use Bauhaus\DbAsserture\Queries\InsertQuery;
 use Bauhaus\DbAsserture\Queries\SelectQuery;
 use Bauhaus\DbAsserture\Queries\TruncateQuery;
 
 class DbAsserture
 {
-    private Database $database;
+    private DbConnection $database;
 
-    public function __construct(Database $database)
+    public function __construct(DbConnection $database)
     {
         $this->database = $database;
     }
