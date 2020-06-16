@@ -8,8 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class RegisterTest extends TestCase
 {
-    /** @var Register */
-    private $register;
+    private Register $register;
 
     protected function setUp(): void
     {

@@ -8,8 +8,7 @@ use Bauhaus\DbAsserture\Queries\TruncateQuery;
 
 class DbAsserture
 {
-    /** @var Database */
-    private $database;
+    private Database $database;
 
     public function __construct(Database $database)
     {

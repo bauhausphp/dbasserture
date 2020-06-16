@@ -12,8 +12,7 @@ class SelectQueryTest extends TestCase
         'field2' => null,
     ];
 
-    /** @var SelectQuery */
-    private $query;
+    private SelectQuery $query;
 
     protected function setUp(): void
     {

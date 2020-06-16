@@ -5,7 +5,7 @@ namespace Bauhaus\DbAsserture\Sql;
 class Register
 {
     /** @var Field[] */
-    private $fields = [];
+    private array $fields = [];
 
     public function __construct(array $register)
     {

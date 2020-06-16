@@ -15,7 +15,6 @@ class DbAssertureFactoryTest extends TestCase
      */
     public function staticallyCreateDbAsserture(): void
     {
-        /** @var PDO $pdo */
         $pdo = $this->createMock(PDO::class);
         $expected = new DbAsserture(new Database($pdo));
 

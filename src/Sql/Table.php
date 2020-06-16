@@ -4,8 +4,7 @@ namespace Bauhaus\DbAsserture\Sql;
 
 class Table
 {
-    /** @var string */
-    private $name;
+    private string $name;
 
     public function __construct(string $name)
     {
