@@ -1,14 +1,14 @@
-[![Build Status](https://img.shields.io/travis/bauhausphp/dbasserture.svg?style=flat-square)](https://travis-ci.org/bauhausphp/dbasserture)
-[![Coverage Status](https://img.shields.io/coveralls/github/bauhausphp/dbasserture.svg?style=flat-square)](https://coveralls.io/github/bauhausphp/dbasserture?branch=master)
+[![Build Status](https://img.shields.io/github/workflow/status/bauhausphp/dbasserture/Build?style=flat-square)](https://github.com/bauhausphp/dbasserture/actions?query=workflow%3ABuild)
+[![Coverage](https://img.shields.io/codecov/c/github/bauhausphp/dbasserture?style=flat-square)](https://codecov.io/gh/bauhausphp/dbasserture)
 
-[![Latest Stable Version](https://poser.pugx.org/bauhaus/dbasserture/v/stable?format=flat-square)](https://packagist.org/packages/bauhaus/dbasserture)
-[![Latest Unstable Version](https://poser.pugx.org/bauhaus/dbasserture/v/unstable?format=flat-square)](https://packagist.org/packages/bauhaus/dbasserture)
-[![Total Downloads](https://poser.pugx.org/bauhaus/dbasserture/downloads?format=flat-square)](https://packagist.org/packages/bauhaus/dbasserture)
-[![composer.lock](https://poser.pugx.org/bauhaus/dbasserture/composerlock?format=flat-square)](https://packagist.org/packages/bauhaus/dbasserture)
+[![Stable Version](https://img.shields.io/packagist/v/bauhaus/dbasserture?style=flat-square)](https://packagist.org/packages/bauhaus/dbasserture)
+[![Downloads](https://img.shields.io/packagist/dt/bauhaus/dbasserture?style=flat-square)](https://packagist.org/packages/bauhaus/dbasserture)
+[![PHP Version](https://img.shields.io/packagist/php-v/bauhaus/dbasserture?style=flat-square)](composer.json)
+[![License](https://img.shields.io/github/license/bauhausphp/dbasserture?style=flat-square)](LICENSE)
 
 # DB Asserture
 
-This tool was created to help the DB setup and assertion in a integration tests
+This tool aims to help the DB setup and assertion in a integration tests
 context.
 
 ```php
