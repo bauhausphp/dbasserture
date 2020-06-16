@@ -6,15 +6,11 @@
     "type": "library",
     "license": "MIT",
 
-    "authors": [
-        {
-            "name": "Felipe Martins",
-            "email": "me@fefas.net"
-        }
-    ],
-
     "scripts": {
-        "test:unit": "phpunit -c phpunit.xml --testdox --colors=always"
+        "test:unit": "phpunit -c phpunit.xml --testdox --colors=always",
+        "tests": [
+            "@test:unit"
+        ]
     },
 
     "autoload": {
@@ -29,7 +25,7 @@
         }
     },
 
-    "required": {
+    "require": {
         "php": "^7.3"
     },
 
