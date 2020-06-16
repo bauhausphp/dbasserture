@@ -1,11 +1,11 @@
 <?php
 
-namespace Bauhaus\DbAsserture;
+namespace Bauhaus\DbAsserture\DbConnection;
 
 use Bauhaus\DbAsserture\Queries\Query;
 use RuntimeException;
 
-class DatabasePrepareException extends RuntimeException
+class DbPrepareException extends RuntimeException
 {
     public function __construct(Query $query)
     {

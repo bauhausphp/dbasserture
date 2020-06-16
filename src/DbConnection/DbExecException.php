@@ -1,11 +1,11 @@
 <?php
 
-namespace Bauhaus\DbAsserture;
+namespace Bauhaus\DbAsserture\DbConnection;
 
 use PDOStatement;
 use RuntimeException;
 
-class DatabaseExecException extends RuntimeException
+class DbExecException extends RuntimeException
 {
     public function __construct(PDOStatement $statement)
     {
