@@ -35,8 +35,8 @@ jobs:
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: composer install --prefer-dist --no-progress --no-suggest
 
-#    - name: Test - coding standards
-#      run: composer run test:cs
+    - name: Test - coding standards
+      run: composer run test:cs
 
     - name: Test - unit
       run: composer run test:unit -- --coverage-clover ./coverage.xml
