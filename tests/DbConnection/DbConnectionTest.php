@@ -2,22 +2,26 @@
 
 namespace Bauhaus\DbAsserture\DbConnection;
 
-use Bauhaus\DbAsserture\Queries\Query;
+use Bauhaus\DbAsserture\QueryBuilders\QueryBuilder;
 use Bauhaus\DbAsserture\Sql\Register;
 use PDO;
+use PHPUnit\Framework\MockObject\Builder\InvocationMocker;
 use PHPUnit\Framework\TestCase;
 
 class DbConnectionTest extends TestCase
 {
     private DbConnection $database;
     private PDO $pdo;
+    private QueryBuilder $queryBuilder;
 
     protected function setUp(): void
     {
         $this->pdo = new PDO('sqlite::memory:');
-        $this->pdo->exec('CREATE TABLE `sample` (id INTEGER, name VARCHAR(255))');
+        $this->pdo->exec('CREATE TABLE "sample" (id INTEGER, name VARCHAR(255))');
 
-        $this->database = new DbConnection($this->pdo);
+        $this->queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $this->database = new DbConnection($this->pdo, $this->queryBuilder);
     }
 
     /**
@@ -26,12 +30,14 @@ class DbConnectionTest extends TestCase
     public function execQueryByCallingPdo(): void
     {
         $expectedRegister = ['id' => 1, 'name' => 'Name'];
-        $query = $this->createQueryToInsert($expectedRegister);
+        $query = SampleQuery::withBinds($expectedRegister);
+        $this->expectQueryBuilderToBeCalled()
+            ->with($query)
+            ->willReturn('INSERT INTO "sample" ("id", "name") VALUES (:id, :name)');
 
-        $this->database->exec($query);
+        $this->database->run($query);
 
-        $line = $this->fetchFirstLine();
-        $this->assertEquals($expectedRegister, $line);
+        $this->assertEquals($expectedRegister, $this->fetchLines());
     }
 
     /**
@@ -41,7 +47,10 @@ class DbConnectionTest extends TestCase
     {
         $this->insertLine(1, 'Jane');
         $this->insertLine(2, 'John');
-        $query = $this->createQueryToSelectAll();
+        $query = new SampleQuery();
+        $this->expectQueryBuilderToBeCalled()
+            ->with($query)
+            ->willReturn('SELECT * FROM "sample"');
 
         $registers = $this->database->query($query);
 
@@ -57,11 +66,14 @@ class DbConnectionTest extends TestCase
      */
     public function throwDatabaseExecExceptionIfAnErrorOccursDuringQueryExecution(): void
     {
-        $query = $this->createQueryWithWrongBinds();
+        $query = SampleQuery::withBinds(['id' => 1]);
+        $this->expectQueryBuilderToBeCalled()
+            ->with($query)
+            ->willReturn('SELECT * FROM "sample" WHERE id = :wrong');
 
         $this->expectException(DbExecException::class);
 
-        $this->database->exec($query);
+        $this->database->run($query);
     }
 
     /**
@@ -69,84 +81,26 @@ class DbConnectionTest extends TestCase
      */
     public function throwDatabasePrepareExceptionIfAnErrorOccursDuringQueryPreparation(): void
     {
-        $query = $this->createInvalidQuery();
+        $query = new SampleQuery();
+        $this->expectQueryBuilderToBeCalled()
+            ->with($query)
+            ->willReturn('INVALID');
 
         $this->expectException(DbPrepareException::class);
 
-        $this->database->exec($query);
+        $this->database->run($query);
     }
-
-    /**
-     * @param string|int[] $register
-     */
-    private function createQueryToInsert(array $register): Query
+    private function expectQueryBuilderToBeCalled(): InvocationMocker
     {
-        $query = $this->createMock(Query::class);
-
-        $query
-            ->method('__toString')
-            ->willReturn('INSERT INTO `sample` (id, name) VALUES (:id, :name)');
-        $query
-            ->method('binds')
-            ->willReturn($register);
-
-        return $query;
+        return $this->queryBuilder->expects($this->once())->method('build');
     }
 
-    private function createQueryToSelectAll(): Query
-    {
-        $query = $this->createMock(Query::class);
-
-        $query
-            ->method('__toString')
-            ->willReturn('SELECT * FROM `sample`');
-        $query
-            ->method('binds')
-            ->willReturn([]);
-
-        return $query;
-    }
-
-    private function createQueryWithWrongBinds(): Query
-    {
-        $query = $this->createMock(Query::class);
-
-        $query
-            ->method('__toString')
-            ->willReturn('SELECT * FROM `sample` WHERE id = :id');
-        $query
-            ->method('binds')
-            ->willReturn(['wrong' => 'value']);
-
-        return $query;
-    }
-
-    private function createInvalidQuery(): Query
-    {
-        $query = $this->createMock(Query::class);
-
-        $query
-            ->method('__toString')
-            ->willReturn('INVALID');
-        $query
-            ->method('binds')
-            ->willReturn([]);
-
-        return $query;
-    }
-
-    /**
-     * @return string[]
-     */
     private function insertLine(string $id, string $name): void
     {
         $this->pdo->exec("INSERT INTO `sample` (`id`, `name`) VALUES ($id, '$name')");
     }
 
-    /**
-     * @return string[]
-     */
-    private function fetchFirstLine(): array
+    private function fetchLines(): array
     {
         $statement = $this->pdo->query('SELECT * FROM `sample`');
 

@@ -3,32 +3,27 @@
 namespace Bauhaus\DbAsserture;
 
 use Bauhaus\DbAsserture\DbConnection\DbConnection;
-use Bauhaus\DbAsserture\Queries\InsertQuery;
-use Bauhaus\DbAsserture\Queries\SelectQuery;
-use Bauhaus\DbAsserture\Queries\TruncateQuery;
+use Bauhaus\DbAsserture\Queries\Insert;
+use Bauhaus\DbAsserture\Queries\Select;
+use Bauhaus\DbAsserture\Queries\Truncate;
+use Bauhaus\DbAsserture\Sql\Register;
 
 class DbAsserture
 {
-    private DbConnection $database;
+    private DbConnection $dbConnection;
 
     public function __construct(DbConnection $database)
     {
-        $this->database = $database;
+        $this->dbConnection = $database;
     }
 
-    /**
-     * @param string|int[] $register
-     */
     public function insertOne(string $table, array $register): void
     {
-        $query = new InsertQuery($table, $register);
+        $insert = new Insert($table, new Register($register));
 
-        $this->database->exec($query);
+        $this->dbConnection->run($insert);
     }
 
-    /**
-     * @param string|int[][] $register
-     */
     public function insertMany(string $table, array $registers): void
     {
         foreach ($registers as $register) {
@@ -38,22 +33,16 @@ class DbAsserture
 
     public function cleanTable(string $table): void
     {
-        $query = new TruncateQuery($table);
-
-        $this->database->exec($query);
+        $this->dbConnection->run(new Truncate($table));
     }
 
-    /**
-     * @param string|int[] $register
-     */
     public function assertOneIsRegistered(string $table, array $register): bool
     {
-        $query = new SelectQuery($table, $register);
-
-        $registers = $this->database->query($query);
+        $select = new Select($table, new Register($register));
+        $registers = $this->dbConnection->query($select);
 
         if (count($registers) !== 1) {
-            throw new DbAssertureOneIsRegisteredFailedException($query, $registers);
+            throw new DbAssertureOneIsRegisteredFailedException($select, $registers);
         }
 
         return true;

@@ -30,6 +30,11 @@ abstract class AbstractQuery implements Query
         return $this->hasRegister() ? $this->register->queryParams() : [];
     }
 
+    public function binds(): array
+    {
+        return $this->hasRegister() ? $this->register->queryBinds() : [];
+    }
+
     private function hasRegister(): bool
     {
         return null !== $this->register;
