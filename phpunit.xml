@@ -13,7 +13,6 @@
 <filter>
     <whitelist processUncoveredFilesFromWhitelist="true">
         <directory suffix=".php">./src</directory>
-        <exclude>./src/DbAsserturePdoFactory.php</exclude>
     </whitelist>
 </filter>
 </phpunit>
