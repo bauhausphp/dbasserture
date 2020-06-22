@@ -14,13 +14,6 @@ class Register
         }
     }
 
-    public function __toString(): string
-    {
-        $fields = array_map(fn(Field $field) => "{$field->name()} => {$field->value()}", $this->fields);
-
-        return implode(', ', $fields);
-    }
-
     public function columns(): array
     {
         return array_map(fn(Field $field) => $field->name(), $this->fields);
