@@ -7,7 +7,7 @@ use RuntimeException;
 
 class DbPrepareException extends RuntimeException
 {
-    public function __construct(Query $query)
+    public function __construct(string $query)
     {
         parent::__construct("Error to prepare query $query");
     }

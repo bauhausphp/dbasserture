@@ -3,59 +3,72 @@
 namespace Bauhaus\DbAsserture;
 
 use Bauhaus\DbAsserture\DbConnection\DbConnection;
-use Bauhaus\DbAsserture\Queries\InsertQuery;
-use Bauhaus\DbAsserture\Queries\Query;
-use Bauhaus\DbAsserture\Queries\SelectQuery;
-use Bauhaus\DbAsserture\Queries\TruncateQuery;
+use Bauhaus\DbAsserture\Queries\Insert;
+use Bauhaus\DbAsserture\Queries\Select;
+use Bauhaus\DbAsserture\Queries\Truncate;
 use Bauhaus\DbAsserture\Sql\Register;
 use PHPUnit\Framework\TestCase;
 
 class DbAssertureTest extends TestCase
 {
     private DbAsserture $dbAsserture;
-    private DbConnection $database;
+    private DbConnection $dbConnection;
 
     protected function setUp(): void
     {
-        $this->database = $this->createMock(DbConnection::class);
-        $this->dbAsserture = new DbAsserture($this->database);
+        $this->dbConnection = $this->createMock(DbConnection::class);
+        $this->dbAsserture = new DbAsserture($this->dbConnection);
     }
 
     /**
      * @test
      */
-    public function insertRegisterByCallingDatabaseWithInsertQuery(): void
+    public function insertRegisterByCallingDbConnectionWithInsertQuery(): void
     {
-        $query = new InsertQuery('table', ['field1' => 'value1']);
+        $query = new Insert('table', new Register(['field1' => 'value1']));
 
-        $this->mockDatabaseExecToBeCalledOnceWith($query);
+        $this->dbConnection
+            ->expects($this->once())
+            ->method('run')
+            ->with($query);
 
         $this->dbAsserture->insertOne('table', ['field1' => 'value1']);
     }
 
     /**
      * @test
-     * TODO insert more than one
      */
-    public function insertManyRegistersByCallingDatabaseWithManyInsertQueries(): void
+    public function insertManyRegistersByCallingDbConnectionWithManyInsertQueries(): void
     {
-        $query = new InsertQuery('table', ['field1' => 'value1']);
+        $query0 = new Insert('table', new Register(['field1' => 'value1']));
+        $query1 = new Insert('table', new Register(['field2' => 'value2']));
 
-        $this->mockDatabaseExecToBeCalledWith([$query]);
+        $this->dbConnection
+            ->expects($this->at(0))
+            ->method('run')
+            ->with($query0);
+        $this->dbConnection
+            ->expects($this->at(1))
+            ->method('run')
+            ->with($query1);
 
         $this->dbAsserture->insertMany('table', [
             ['field1' => 'value1'],
+            ['field2' => 'value2'],
         ]);
     }
 
     /**
      * @test
      */
-    public function truncateTableByCallingDatabaseWithTruncateQuery(): void
+    public function truncateTableByCallingDbConnectionWithTruncateQuery(): void
     {
-        $query = new TruncateQuery('table');
+        $query = new Truncate('table');
 
-        $this->mockDatabaseExecToBeCalledOnceWith($query);
+        $this->dbConnection
+            ->expects($this->once())
+            ->method('run')
+            ->with($query);
 
         $this->dbAsserture->cleanTable('table');
     }
@@ -65,8 +78,12 @@ class DbAssertureTest extends TestCase
      */
     public function returnTrueIfAssertFindsRegisterInDatabase(): void
     {
-        $query = new SelectQuery('table', ['field1' => 'value1']);
-        $this->mockDatabaseQueryToReturnOneRegister($query, ['field1' => 'value1']);
+        $query = new Select('table', new Register(['field1' => 'value1']));
+        $this->dbConnection
+            ->expects($this->once())
+            ->method('query')
+            ->with($query)
+            ->willReturn([new Register(['field1' => 'value1'])]);
 
         $result = $this->dbAsserture->assertOneIsRegistered('table', ['field1' => 'value1']);
 
@@ -78,8 +95,12 @@ class DbAssertureTest extends TestCase
      */
     public function throwAssertOneIsRegisteredFailedExceptionIfDatabaseReturnsNoRegister(): void
     {
-        $query = new SelectQuery('table', ['field1' => 'value1']);
-        $this->mockDatabaseQueryToReturnNoRegister($query);
+        $query = new Select('table', new Register(['field1' => 'value1']));
+        $this->dbConnection
+            ->expects($this->once())
+            ->method('query')
+            ->with($query)
+            ->willReturn([]);
 
         $this->expectException(DbAssertureOneIsRegisteredFailedException::class);
 
@@ -91,64 +112,18 @@ class DbAssertureTest extends TestCase
      */
     public function throwAssertOneIsRegisteredFailedExceptionIfDatabaseReturnsManyRegisters(): void
     {
-        $query = new SelectQuery('table', ['field1' => 'value1']);
-        $this->mockDatabaseQueryToReturnManyRegisters($query, [
-            ['field1' => 'value1'],
-            ['field1' => 'value2'],
-        ]);
+        $query = new Select('table', new Register(['field1' => 'value1']));
+        $this->dbConnection
+            ->expects($this->once())
+            ->method('query')
+            ->with($query)
+            ->willReturn([
+                new Register(['field1' => 'value1']),
+                new Register(['field2' => 'value2']),
+            ]);
 
         $this->expectException(DbAssertureOneIsRegisteredFailedException::class);
 
         $this->dbAsserture->assertOneIsRegistered('table', ['field1' => 'value1']);
-    }
-
-    private function mockDatabaseExecToBeCalledOnceWith(Query $query): void
-    {
-        $this->mockDatabaseExecToBeCalledWith([$query]);
-    }
-
-    /**
-     * @param Query[] $queries
-     */
-    private function mockDatabaseExecToBeCalledWith(array $queries): void
-    {
-        $count = count($queries);
-
-        $this->database
-            ->expects($this->exactly($count))
-            ->method('exec')
-            ->withConsecutive($queries);
-    }
-
-    private function mockDatabaseQueryToReturnOneRegister(Query $query, array $register): void
-    {
-        $this->mockDatabaseQueryToReturnManyRegisters($query, [$register]);
-    }
-
-    private function mockDatabaseQueryToReturnManyRegisters(Query $query, array $registers): void
-    {
-        /** @var Register[] $registers */
-        $registers = array_map(function (array $register) {
-            return new Register($register);
-        }, $registers);
-
-        $this->mockDatabaseQueryToBeCalledAndReturn($query, $registers);
-    }
-
-    private function mockDatabaseQueryToReturnNoRegister(Query $query): void
-    {
-        $this->mockDatabaseQueryToBeCalledAndReturn($query, []);
-    }
-
-    /**
-     * @param Register[] $registers
-     */
-    private function mockDatabaseQueryToBeCalledAndReturn(Query $query, array $registers): void
-    {
-        $this->database
-            ->expects($this->once())
-            ->method('query')
-            ->with($query)
-            ->willReturn($registers);
     }
 }

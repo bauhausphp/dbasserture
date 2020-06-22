@@ -13,10 +13,9 @@ context.
 
 ```php
 use Bauhaus\DbAsserture\DbAssertureFactory;
-use PDO;
 
-$pdo = new PDO(/* ... */);
-$dbAsserture = DbAssertureFactory::create($pdo);
+$factory = new DbAssertureFactory();
+$dbAsserture = $factory->fromDsn('mysql://user:pass@host:port/dbname');
 
 $dbAsserture->cleanTable('table_name');
 $dbAsserture->insertOne('table_name', ['id' => 1, 'name' => 'Name']);

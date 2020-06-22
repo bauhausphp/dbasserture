@@ -4,10 +4,8 @@ namespace Bauhaus\DbAsserture\Queries;
 
 interface Query
 {
-    public function __toString(): string;
-
-    /**
-     * @return null|string|int[]
-     */
+    public function table(): string;
+    public function columns(): array;
+    public function params(): array;
     public function binds(): array;
 }

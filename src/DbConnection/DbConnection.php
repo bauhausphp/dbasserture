@@ -3,6 +3,7 @@
 namespace Bauhaus\DbAsserture\DbConnection;
 
 use Bauhaus\DbAsserture\Queries\Query;
+use Bauhaus\DbAsserture\QueryBuilders\QueryBuilder;
 use Bauhaus\DbAsserture\Sql\Register;
 use PDO;
 use PDOStatement;
@@ -10,13 +11,15 @@ use PDOStatement;
 class DbConnection
 {
     private PDO $pdo;
+    private QueryBuilder $queryBuilder;
 
-    public function __construct(PDO $pdo)
+    public function __construct(PDO $pdo, QueryBuilder $queryBuilder)
     {
         $this->pdo = $pdo;
+        $this->queryBuilder = $queryBuilder;
     }
 
-    public function exec(Query $query): void
+    public function run(Query $query): void
     {
         $this->execute($query);
     }
@@ -25,7 +28,7 @@ class DbConnection
     {
         $statement = $this->execute($query);
 
-        return $this->createRegisters($statement);
+        return $this->registersFromPdoStatement($statement);
     }
 
     private function execute(Query $query): PDOStatement
@@ -42,7 +45,8 @@ class DbConnection
 
     private function prepare(Query $query): PDOStatement
     {
-        $statement = $this->pdo->prepare((string) $query);
+        $query = $this->queryBuilder->build($query);
+        $statement = $this->pdo->prepare($query);
 
         if (false === $statement) {
             throw new DbPrepareException($query);
@@ -51,16 +55,10 @@ class DbConnection
         return $statement;
     }
 
-    /**
-     * @return Register[]
-     */
-    private function createRegisters(PDOStatement $statement): array
+    private function registersFromPdoStatement(PDOStatement $statement): array
     {
-        $registers = [];
-        foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $register) {
-            $registers[] = new Register($register);
-        }
+        $fetchedRows = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-        return $registers;
+        return array_map(fn(array $row) => new Register($row), $fetchedRows);
     }
 }
