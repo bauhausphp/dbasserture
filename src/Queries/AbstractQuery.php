@@ -6,13 +6,19 @@ use Bauhaus\DbAsserture\Sql\Register;
 
 abstract class AbstractQuery implements Query
 {
+    private ?string $database;
     private string $table;
     private ?Register $register;
 
     public function __construct(string $table, Register $register = null)
     {
-        $this->table = $table;
+        [$this->database, $this->table] = $this->extractDatabaseAndTable($table);
         $this->register = $register;
+    }
+
+    public function database(): ?string
+    {
+        return $this->database;
     }
 
     public function table(): string
@@ -38,5 +44,15 @@ abstract class AbstractQuery implements Query
     private function hasRegister(): bool
     {
         return null !== $this->register;
+    }
+
+    private function extractDatabaseAndTable(string $table): array
+    {
+        $tableParts = explode('.', $table);
+
+        return [
+            count($tableParts) > 1 ? $tableParts[0] : null,
+            count($tableParts) > 1 ? $tableParts[1] : $tableParts[0],
+        ];
     }
 }

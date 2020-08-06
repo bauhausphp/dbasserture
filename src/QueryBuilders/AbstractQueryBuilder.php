@@ -7,6 +7,7 @@ use Bauhaus\DbAsserture\Queries\Query;
 abstract class AbstractQueryBuilder implements QueryBuilder
 {
     protected const ESCAPE_CHAR = null;
+    protected const USE_QUERY_TEMPLATE = null;
     protected const QUERY_TEMPLATES = [];
 
     public function build(Query $query): string
@@ -19,7 +20,10 @@ abstract class AbstractQueryBuilder implements QueryBuilder
 
     private function findTemplate(Query $query): string
     {
-        return static::QUERY_TEMPLATES[get_class($query)];
+        $useTemplate = static::USE_QUERY_TEMPLATE;
+        $queryTemplate = static::QUERY_TEMPLATES[get_class($query)];
+
+        return $query->database() ? "$useTemplate $queryTemplate" : $queryTemplate;
     }
 
     private function buildParams(Query $query): array
@@ -33,6 +37,7 @@ abstract class AbstractQueryBuilder implements QueryBuilder
         }
 
         return [
+            'db' => $query->database() ? $this->escape($query->database()) : null,
             'table' => $this->escape($query->table()),
             'columns' => implode(', ', $columns),
             'params' => implode(', ', $queryParams),

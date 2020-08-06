@@ -16,6 +16,11 @@ class SampleQuery implements Query
         return $self;
     }
 
+    public function database(): ?string
+    {
+        return 'dummy-db';
+    }
+
     public function table(): string
     {
         return 'dummy-table';
