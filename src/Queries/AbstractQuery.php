@@ -6,13 +6,22 @@ use Bauhaus\DbAsserture\Sql\Register;
 
 abstract class AbstractQuery implements Query
 {
+    private ?string $database;
     private string $table;
     private ?Register $register;
 
     public function __construct(string $table, Register $register = null)
     {
-        $this->table = $table;
+        $tableParts = explode('.', $table);
+
+        $this->database = count($tableParts) > 1 ? $tableParts[0] : null;
+        $this->table = count($tableParts) > 1 ? $tableParts[1] : $tableParts[0];
         $this->register = $register;
+    }
+
+    public function database(): ?string
+    {
+        return $this->database;
     }
 
     public function table(): string
