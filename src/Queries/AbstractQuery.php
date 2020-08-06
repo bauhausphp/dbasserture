@@ -12,10 +12,7 @@ abstract class AbstractQuery implements Query
 
     public function __construct(string $table, Register $register = null)
     {
-        $tableParts = explode('.', $table);
-
-        $this->database = count($tableParts) > 1 ? $tableParts[0] : null;
-        $this->table = count($tableParts) > 1 ? $tableParts[1] : $tableParts[0];
+        [$this->database, $this->table] = $this->extractDatabaseAndTable($table);
         $this->register = $register;
     }
 
@@ -47,5 +44,15 @@ abstract class AbstractQuery implements Query
     private function hasRegister(): bool
     {
         return null !== $this->register;
+    }
+
+    private function extractDatabaseAndTable(string $table): array
+    {
+        $tableParts = explode('.', $table);
+
+        return [
+            count($tableParts) > 1 ? $tableParts[0] : null,
+            count($tableParts) > 1 ? $tableParts[1] : $tableParts[0],
+        ];
     }
 }

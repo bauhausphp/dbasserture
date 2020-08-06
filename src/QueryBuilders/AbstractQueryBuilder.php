@@ -20,13 +20,10 @@ abstract class AbstractQueryBuilder implements QueryBuilder
 
     private function findTemplate(Query $query): string
     {
-        $template = static::QUERY_TEMPLATES[get_class($query)];
+        $useTemplate = static::USE_QUERY_TEMPLATE;
+        $queryTemplate = static::QUERY_TEMPLATES[get_class($query)];
 
-        if ($query->database()) {
-            $template = static::USE_QUERY_TEMPLATE." $template";
-        }
-
-        return $template;
+        return $query->database() ? "$useTemplate $queryTemplate" : $queryTemplate;
     }
 
     private function buildParams(Query $query): array
