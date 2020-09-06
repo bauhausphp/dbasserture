@@ -6,8 +6,10 @@ use RuntimeException;
 
 class DbAssertureOneIsRegisteredFailedException extends RuntimeException
 {
-    public function __construct()
+    public function __construct(string $table, array $filter, array $expected, array $actual)
     {
-        parent::__construct('Failed finding one registred in database');
+        $message = '';
+
+        parent::__construct($message);
     }
 }

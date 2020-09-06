@@ -22,16 +22,6 @@ abstract class AbstractQuery implements Query
         return $this->table;
     }
 
-    public function columns(): array
-    {
-        return [];
-    }
-
-    public function params(): array
-    {
-        return [];
-    }
-
     public function binds(): array
     {
         return [];

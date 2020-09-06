@@ -65,6 +65,6 @@ class DbAsserture
             return true;
         }
 
-        throw new DbAssertureAnotherRegisterFoundException($table, $filter, $expected, $actual);
+        throw new DbAssertureOneIsRegisteredFailedException($table, $filter, $expected, $actual);
     }
 }

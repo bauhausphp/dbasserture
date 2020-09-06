@@ -100,7 +100,7 @@ class SqliteDbAssertureTest extends TestCase
     {
         $this->insertLine(1, 'John');
 
-        $this->expectException(DbAssertureAnotherRegisterFoundException::class);
+        $this->expectException(DbAssertureOneIsRegisteredFailedException::class);
 
         $this->dbAsserture->assertOneIsRegistered('sample', ['id' => 1, 'name' => 'Jane']);
     }

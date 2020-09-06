@@ -183,7 +183,7 @@ class DbAssertureTest extends TestCase
                 new Register(['id' => 'id-value', 'field' => 'another-value']),
             ]);
 
-        $this->expectException(DbAssertureAnotherRegisterFoundException::class);
+        $this->expectException(DbAssertureOneIsRegisteredFailedException::class);
 
         $this->dbAsserture->assertOneIsRegistered('table', ['id' => 'id-value', 'field' => 'value']);
     }
