@@ -2,7 +2,9 @@
 
 namespace Bauhaus\DbAsserture\QueryBuilders;
 
+use Bauhaus\DbAsserture\Queries\Insert;
 use Bauhaus\DbAsserture\Queries\Query;
+use Bauhaus\DbAsserture\Queries\Select;
 
 abstract class AbstractQueryBuilder implements QueryBuilder
 {
@@ -12,13 +14,13 @@ abstract class AbstractQueryBuilder implements QueryBuilder
 
     public function build(Query $query): string
     {
-        $template = $this->findTemplate($query);
-        $params = $this->buildParams($query);
+        $template = $this->determineTemplate($query);
+        $params = $this->buildPlaceholders($query);
 
-        return $this->replaceParams($template, $params);
+        return $this->replacePlaceholders($template, $params);
     }
 
-    private function findTemplate(Query $query): string
+    private function determineTemplate(Query $query): string
     {
         $useTemplate = static::USE_QUERY_TEMPLATE;
         $queryTemplate = static::QUERY_TEMPLATES[get_class($query)];
@@ -26,31 +28,41 @@ abstract class AbstractQueryBuilder implements QueryBuilder
         return $query->database() ? "$useTemplate $queryTemplate" : $queryTemplate;
     }
 
-    private function buildParams(Query $query): array
+    private function buildPlaceholders(Query $query): array
     {
-        $columns = $this->escapeColumns($query);
-        $queryParams = $query->params();
+        $placeholders = $this->specificPlaceholders($query);
 
-        $where = [];
-        foreach ($columns as $k => $column) {
-            $where[] = "$column = {$queryParams[$k]}";
-        }
-
-        return [
+        return array_merge($placeholders, [
             'db' => $query->database() ? $this->escape($query->database()) : null,
             'table' => $this->escape($query->table()),
-            'columns' => implode(', ', $columns),
-            'params' => implode(', ', $queryParams),
-            'where' => implode(' AND ', $where),
-        ];
+        ]);
     }
 
-    private function escapeColumns(Query $query): array
+    private function specificPlaceholders(Query $query): array
     {
-        return array_map(fn(string $field) => $this->escape($field), $query->columns());
+        if ($query instanceof Insert) {
+            return [
+                'columns' => implode(', ', array_map(fn(string $field) => $this->escape($field), $query->columns())),
+                'params' => implode(', ', $query->params()),
+            ];
+        }
+
+        if ($query instanceof Select) {
+            $wheres = array_map(
+                fn(string $column, string $value) => "{$this->escape($column)} = $value",
+                array_keys($query->filters()),
+                $query->filters(),
+            );
+
+            return [
+                'wheres' => implode(' AND ', $wheres),
+            ];
+        }
+
+        return [];
     }
 
-    private function replaceParams(string $template, array $params): string
+    private function replacePlaceholders(string $template, array $params): string
     {
         foreach ($params as $name => $value) {
             $template = str_replace("{{$name}}", $value, $template);

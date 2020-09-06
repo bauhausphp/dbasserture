@@ -14,6 +14,17 @@ class Register
         }
     }
 
+    public function asArray(): array
+    {
+        $arr = [];
+
+        foreach ($this->fields as $field) {
+            $arr[$field->name()] = $field->value();
+        }
+
+        return $arr;
+    }
+
     public function columns(): array
     {
         return array_map(fn(Field $field) => $field->name(), $this->fields);

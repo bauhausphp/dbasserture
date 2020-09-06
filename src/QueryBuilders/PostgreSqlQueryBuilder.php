@@ -13,6 +13,6 @@ final class PostgreSqlQueryBuilder extends AbstractQueryBuilder
     protected const QUERY_TEMPLATES = [
         Truncate::class => 'TRUNCATE {table} CASCADE;',
         Insert::class => 'INSERT INTO {table} ({columns}) VALUES ({params});',
-        Select::class =>  'SELECT {columns} FROM {table} WHERE {where};',
+        Select::class =>  'SELECT * FROM {table} WHERE {wheres};',
     ];
 }

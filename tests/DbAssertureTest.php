@@ -76,16 +76,78 @@ class DbAssertureTest extends TestCase
     /**
      * @test
      */
-    public function returnTrueIfAssertFindsRegisterInDatabase(): void
+    public function selectManyRegistersByCallingDbConnectionWithSelectQuery(): void
     {
-        $query = new Select('table', new Register(['field1' => 'value1']));
+        $query = new Select('table', new Register(['id' => 'id-value']));
+
         $this->dbConnection
             ->expects($this->once())
             ->method('query')
             ->with($query)
-            ->willReturn([new Register(['field1' => 'value1'])]);
+            ->willReturn([
+                new Register(['id' => 'id-value', 'field' => 'field-value']),
+            ]);
 
-        $result = $this->dbAsserture->assertOneIsRegistered('table', ['field1' => 'value1']);
+        $register = $this->dbAsserture->selectMany('table', ['id' => 'id-value']);
+
+        $this->assertEquals([['id' => 'id-value', 'field' => 'field-value']], $register);
+    }
+
+    /**
+     * @test
+     */
+    public function selectOneRegisterByCallingDbConnectionWithSelectQuery(): void
+    {
+        $query = new Select('table', new Register(['id' => 'id-value']));
+
+        $this->dbConnection
+            ->expects($this->once())
+            ->method('query')
+            ->with($query)
+            ->willReturn([
+                new Register(['id' => 'id-value', 'field' => 'field-value']),
+            ]);
+
+        $register = $this->dbAsserture->selectOne('table', ['id' => 'id-value']);
+
+        $this->assertEquals(['id' => 'id-value', 'field' => 'field-value'], $register);
+    }
+
+    /**
+     * @test
+     */
+    public function throwExceptionIfSelectOneRegisterDoesNotQueryOneResult(): void
+    {
+        $query = new Select('table', new Register(['id' => 'id-value']));
+
+        $this->dbConnection
+            ->expects($this->once())
+            ->method('query')
+            ->with($query)
+            ->willReturn([
+                new Register(['id' => 'id-value', 'field' => 'field-value']),
+                new Register(['id' => 'id-value', 'field' => 'field-value']),
+            ]);
+        $this->expectException(DbAssertureMoreThanOneRegisterFoundException::class);
+
+        $this->dbAsserture->selectOne('table', ['id' => 'id-value']);
+    }
+
+    /**
+     * @test
+     */
+    public function returnTrueIfAssertFindsRegisterInDatabase(): void
+    {
+        $query = new Select('table', new Register(['id' => 'id-value']));
+        $this->dbConnection
+            ->expects($this->once())
+            ->method('query')
+            ->with($query)
+            ->willReturn([
+                new Register(['id' => 'id-value', 'field' => 'value']),
+            ]);
+
+        $result = $this->dbAsserture->assertOneIsRegistered('table', ['id' => 'id-value', 'field' => 'value']);
 
         $this->assertTrue($result);
     }
@@ -93,37 +155,36 @@ class DbAssertureTest extends TestCase
     /**
      * @test
      */
-    public function throwAssertOneIsRegisteredFailedExceptionIfDatabaseReturnsNoRegister(): void
+    public function throwAssertOneIsRegisteredFailedExceptionIfDatabaseReturnsManyRegisters(): void
     {
-        $query = new Select('table', new Register(['field1' => 'value1']));
+        $query = new Select('table', new Register(['id' => 'value']));
         $this->dbConnection
             ->expects($this->once())
             ->method('query')
             ->with($query)
-            ->willReturn([]);
+            ->willReturn([new Register([]), new Register([])]);
 
-        $this->expectException(DbAssertureOneIsRegisteredFailedException::class);
+        $this->expectException(DbAssertureMoreThanOneRegisterFoundException::class);
 
-        $this->dbAsserture->assertOneIsRegistered('table', ['field1' => 'value1']);
+        $this->dbAsserture->assertOneIsRegistered('table', ['id' => 'value']);
     }
 
     /**
      * @test
      */
-    public function throwAssertOneIsRegisteredFailedExceptionIfDatabaseReturnsManyRegisters(): void
+    public function throwExceptionIfAssertFindsAnotherRegisterInDatabase(): void
     {
-        $query = new Select('table', new Register(['field1' => 'value1']));
+        $query = new Select('table', new Register(['id' => 'id-value']));
         $this->dbConnection
             ->expects($this->once())
             ->method('query')
             ->with($query)
             ->willReturn([
-                new Register(['field1' => 'value1']),
-                new Register(['field2' => 'value2']),
+                new Register(['id' => 'id-value', 'field' => 'another-value']),
             ]);
 
         $this->expectException(DbAssertureOneIsRegisteredFailedException::class);
 
-        $this->dbAsserture->assertOneIsRegistered('table', ['field1' => 'value1']);
+        $this->dbAsserture->assertOneIsRegistered('table', ['id' => 'id-value', 'field' => 'value']);
     }
 }

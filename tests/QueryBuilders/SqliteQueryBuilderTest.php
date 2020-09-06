@@ -45,11 +45,11 @@ class SqliteQueryBuilderTest extends QueryBuilderTestCase
         return [
             'without database' => [
                 new Select('table', $register),
-                'SELECT "id", "field" FROM "table" WHERE "id" = :id AND "field" = :field;'
+                'SELECT * FROM "table" WHERE "id" = :id AND "field" = :field;'
             ],
             'with database' => [
                 new Select('db.table', $register),
-                'USE "db"; SELECT "id", "field" FROM "table" WHERE "id" = :id AND "field" = :field;'
+                'USE "db"; SELECT * FROM "table" WHERE "id" = :id AND "field" = :field;'
             ],
         ];
     }
