@@ -19,7 +19,7 @@ class Register
         $arr = [];
 
         foreach ($this->fields as $field) {
-            $arr[$field->name()] = $field->value();
+            $arr[$field->name()] = $field->rawValue();
         }
 
         return $arr;

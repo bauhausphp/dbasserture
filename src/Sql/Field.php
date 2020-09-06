@@ -20,7 +20,12 @@ class Field
         return $this->name;
     }
 
-    public function value(): ?string
+    public function rawValue(): ?string
+    {
+        return $this->value;
+    }
+
+    public function value(): string
     {
         return is_null($this->value) ? 'NULL' : $this->value;
     }
