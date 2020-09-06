@@ -6,8 +6,27 @@ use Bauhaus\DbAsserture\Sql\Register;
 
 final class Select extends AbstractQuery
 {
-    public function __construct(string $table, Register $register)
+    private Register $filter;
+
+    public function __construct(string $table, Register $filter)
     {
-        parent::__construct($table, $register);
+        parent::__construct($table);
+
+        $this->filter = $filter;
+    }
+
+    public function filters(): array
+    {
+        $filters = [];
+        foreach ($this->filter->columns() as $k => $column) {
+            $filters[$column] = $this->filter->queryParams()[$k];
+        }
+
+        return $filters;
+    }
+
+    public function binds(): array
+    {
+        return $this->filter->queryBinds();
     }
 }

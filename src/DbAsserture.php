@@ -36,6 +36,22 @@ class DbAsserture
         $this->dbConnection->run(new Truncate($table));
     }
 
+    public function selectMany(string $table, array $filters): array
+    {
+        return $this->dbConnection->query(new Select($table, new Register($filters)));
+    }
+
+    public function selectOne(string $table, array $filters): array
+    {
+        $registers = $this->selectMany($table, $filters);
+
+        if (count($registers) !== 1) {
+            throw new DbAssertureMoreThanOneRegisterFoundException();
+        }
+
+        return $registers[0];
+    }
+
     public function assertOneIsRegistered(string $table, array $register): bool
     {
         $select = new Select($table, new Register($register));

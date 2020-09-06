@@ -76,6 +76,66 @@ class DbAssertureTest extends TestCase
     /**
      * @test
      */
+    public function selectManyRegistersByCallingDbConnectionWithSelectQuery(): void
+    {
+        $query = new Select('table', new Register(['id' => 'id-value']));
+
+        $this->dbConnection
+            ->expects($this->once())
+            ->method('query')
+            ->with($query)
+            ->willReturn([
+                ['id' => 'id-value', 'field' => 'field-value'],
+            ]);
+
+        $register = $this->dbAsserture->selectMany('table', ['id' => 'id-value']);
+
+        $this->assertEquals([['id' => 'id-value', 'field' => 'field-value']], $register);
+    }
+
+    /**
+     * @test
+     */
+    public function selectOneRegisterByCallingDbConnectionWithSelectQuery(): void
+    {
+        $query = new Select('table', new Register(['id' => 'id-value']));
+
+        $this->dbConnection
+            ->expects($this->once())
+            ->method('query')
+            ->with($query)
+            ->willReturn([
+                ['id' => 'id-value', 'field' => 'field-value'],
+            ]);
+
+        $register = $this->dbAsserture->selectOne('table', ['id' => 'id-value']);
+
+        $this->assertEquals(['id' => 'id-value', 'field' => 'field-value'], $register);
+    }
+
+    /**
+     * @test
+     */
+    public function throwExceptionIfSelectOneRegisterDoesNotQueryOneResult(): void
+    {
+        $query = new Select('table', new Register(['id' => 'id-value']));
+
+        $this->dbConnection
+            ->expects($this->once())
+            ->method('query')
+            ->with($query)
+            ->willReturn([
+                ['id' => 'id-value', 'field' => 'field-value'],
+                ['id' => 'id-value', 'field' => 'field-value'],
+            ]);
+        $this->expectException(DbAssertureMoreThanOneRegisterFoundException::class);
+
+        $this->dbAsserture->selectOne('table', ['id' => 'id-value']);
+    }
+
+    /**
+     * @test
+     */
     public function returnTrueIfAssertFindsRegisterInDatabase(): void
     {
         $query = new Select('table', new Register(['field1' => 'value1']));

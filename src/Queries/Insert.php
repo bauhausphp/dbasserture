@@ -6,8 +6,27 @@ use Bauhaus\DbAsserture\Sql\Register;
 
 final class Insert extends AbstractQuery
 {
-    public function __construct(string $table, Register $register)
+    private Register $newRegister;
+
+    public function __construct(string $table, Register $newRegister)
     {
-        parent::__construct($table, $register);
+        parent::__construct($table);
+
+        $this->newRegister = $newRegister;
+    }
+
+    public function columns(): array
+    {
+        return $this->newRegister->columns();
+    }
+
+    public function params(): array
+    {
+        return $this->newRegister->queryParams();
+    }
+
+    public function binds(): array
+    {
+        return $this->newRegister->queryBinds();
     }
 }

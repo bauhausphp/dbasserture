@@ -13,6 +13,6 @@ final class MySqlQueryBuilder extends AbstractQueryBuilder
     protected const QUERY_TEMPLATES = [
         Truncate::class => 'TRUNCATE {table};',
         Insert::class => 'INSERT INTO {table} ({columns}) VALUES ({params});',
-        Select::class =>  'SELECT {columns} FROM {table} WHERE {where};',
+        Select::class =>  'SELECT * FROM {table} WHERE {wheres};',
     ];
 }
