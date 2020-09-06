@@ -6,6 +6,8 @@ use RuntimeException;
 
 class DbAssertureMoreThanOneRegisterFoundException extends RuntimeException
 {
+    use ExceptionConvertingArrayToStringTrait;
+
     private const MSG_TEMPLATE = <<<MSG_TEMPLATE
         Not one register was queried from table "{table}" filtering by:
         {filters}
@@ -32,16 +34,5 @@ class DbAssertureMoreThanOneRegisterFoundException extends RuntimeException
         $registers = array_map(fn(array $register) => $this->arrayToString($register), $registers);
 
         return implode("\n", $registers);
-    }
-
-    private function arrayToString(array $arr): string
-    {
-        $elements = [];
-        foreach ($arr as $k => $v) {
-            $elements[] = "'$k' => '$v'";
-        }
-
-        $elements = implode(', ', $elements);
-        return "  [$elements]";
     }
 }
