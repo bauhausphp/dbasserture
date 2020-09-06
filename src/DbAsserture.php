@@ -10,6 +10,7 @@ use Bauhaus\DbAsserture\Sql\Register;
 
 class DbAsserture
 {
+    private const DEFAULT_ASSERT_FILTER_FIELD = 'id';
     private DbConnection $dbConnection;
 
     public function __construct(DbConnection $database)
@@ -38,7 +39,9 @@ class DbAsserture
 
     public function selectMany(string $table, array $filters): array
     {
-        return $this->dbConnection->query(new Select($table, new Register($filters)));
+        $registers = $this->dbConnection->query(new Select($table, new Register($filters)));
+
+        return array_map(fn(Register $register) => $register->asArray(), $registers);
     }
 
     public function selectOne(string $table, array $filters): array
@@ -46,21 +49,22 @@ class DbAsserture
         $registers = $this->selectMany($table, $filters);
 
         if (count($registers) !== 1) {
-            throw new DbAssertureMoreThanOneRegisterFoundException();
+            throw new DbAssertureMoreThanOneRegisterFoundException($table, $filters, $registers);
         }
 
         return $registers[0];
     }
 
-    public function assertOneIsRegistered(string $table, array $register): bool
+    public function assertOneIsRegistered(string $table, array $expected, string $filterField = null): bool
     {
-        $select = new Select($table, new Register($register));
-        $registers = $this->dbConnection->query($select);
+        $filterField = $filterField ?? self::DEFAULT_ASSERT_FILTER_FIELD;
+        $filter = [$filterField => $expected[$filterField]];
+        $actual = $this->selectOne($table, $filter);
 
-        if (count($registers) !== 1) {
-            throw new DbAssertureOneIsRegisteredFailedException($select, $registers);
+        if ($expected == $actual) {
+            return true;
         }
 
-        return true;
+        throw new DbAssertureAnotherRegisterFoundException($table, $filter, $expected, $actual);
     }
 }

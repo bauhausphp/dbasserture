@@ -70,6 +70,20 @@ class SqliteDbAssertureTest extends TestCase
     /**
      * @test
      */
+    public function selectOneRegister(): void
+    {
+        $this->insertLine(1, 'Jane');
+        $this->insertLine(2, 'John');
+
+        $selectedRegister = $this->dbAsserture->selectOne('sample', ['id' => 1]);
+
+        $expected = ['id' => '1', 'name' => 'Jane'];
+        $this->assertEquals($expected, $selectedRegister);
+    }
+
+    /**
+     * @test
+     */
     public function returnTrueIfRegistryToAssertIsInDatabase(): void
     {
         $this->insertLine(1, 'John');
@@ -84,9 +98,11 @@ class SqliteDbAssertureTest extends TestCase
      */
     public function throwExceptionIfThereIsNoRegistryToAssertInDatabase(): void
     {
-        $this->expectException(DbAssertureOneIsRegisteredFailedException::class);
+        $this->insertLine(1, 'John');
 
-        $this->dbAsserture->assertOneIsRegistered('sample', ['id' => 1, 'name' => 'John']);
+        $this->expectException(DbAssertureAnotherRegisterFoundException::class);
+
+        $this->dbAsserture->assertOneIsRegistered('sample', ['id' => 1, 'name' => 'Jane']);
     }
 
     private function insertLine(string $id, string $name): void
