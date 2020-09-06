@@ -17,7 +17,9 @@ use Bauhaus\DbAsserture\DbAssertureFactory;
 $factory = new DbAssertureFactory();
 $dbAsserture = $factory->fromDsn('mysql://user:pass@host:port/dbname');
 
-$dbAsserture->cleanTable('table_name');
-$dbAsserture->insertOne('table_name', ['id' => 1, 'name' => 'Name']);
-$dbAsserture->assertOneIsRegistered('table_name', ['id' => 1, 'name' => 'Name']); // return true or throw exception
+$dbAsserture->cleanTable('db.table_name');
+$dbAsserture->insertOne('db.table_name', ['id' => 1, 'name' => 'Name']);
+$dbAsserture->selectOne('db.table_name', ['id' => 1]); // return one register with all fields matching provided filters
+$dbAsserture->selectMany('db.table_name', ['name' => 'John']); // return many registers with all fields matching provided filter
+$dbAsserture->assertOneIsRegistered('db.table_name', ['id' => 1, 'name' => 'Name']); // return true or throw exception
 ```
