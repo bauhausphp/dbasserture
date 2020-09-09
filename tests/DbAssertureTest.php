@@ -32,7 +32,7 @@ class DbAssertureTest extends TestCase
             ->method('run')
             ->with($query);
 
-        $this->dbAsserture->insertOne('table', ['field1' => 'value1']);
+        $this->dbAsserture->insert('table', ['field1' => 'value1']);
     }
 
     /**
@@ -40,18 +40,15 @@ class DbAssertureTest extends TestCase
      */
     public function insertManyRegistersByCallingDbConnectionWithManyInsertQueries(): void
     {
-        $query0 = new Insert('table', new Register(['field1' => 'value1']));
-        $query1 = new Insert('table', new Register(['field2' => 'value2']));
+        $query1 = new Insert('table', new Register(['field1' => 'value1']));
+        $query2 = new Insert('table', new Register(['field2' => 'value2']));
 
         $this->dbConnection
             ->expects($this->exactly(2))
             ->method('run')
-            ->withConsecutive([$query0], [$query1]);
+            ->withConsecutive([$query1], [$query2]);
 
-        $this->dbAsserture->insertMany('table', [
-            ['field1' => 'value1'],
-            ['field2' => 'value2'],
-        ]);
+        $this->dbAsserture->insert('table', ['field1' => 'value1'], ['field2' => 'value2']);
     }
 
     /**
@@ -72,6 +69,22 @@ class DbAssertureTest extends TestCase
     /**
      * @test
      */
+    public function truncateManyTablesByCallingDbConnectionWithTruncateQuery(): void
+    {
+        $query1 = new DeleteAll('table-1');
+        $query2 = new DeleteAll('table-2');
+
+        $this->dbConnection
+            ->expects($this->exactly(2))
+            ->method('run')
+            ->withConsecutive([$query1], [$query2]);
+
+        $this->dbAsserture->cleanTable('table-1', 'table-2');
+    }
+
+    /**
+     * @test
+     */
     public function selectManyRegistersByCallingDbConnectionWithSelectQuery(): void
     {
         $query = new Select('table', new Register(['id' => 'id-value']));
@@ -84,7 +97,7 @@ class DbAssertureTest extends TestCase
                 new Register(['id' => 'id-value', 'field' => 'field-value']),
             ]);
 
-        $register = $this->dbAsserture->selectMany('table', ['id' => 'id-value']);
+        $register = $this->dbAsserture->select('table', ['id' => 'id-value']);
 
         $this->assertEquals([['id' => 'id-value', 'field' => 'field-value']], $register);
     }

@@ -17,9 +17,20 @@ use Bauhaus\DbAsserture\DbAssertureFactory;
 $factory = new DbAssertureFactory();
 $dbAsserture = $factory->fromDsn('mysql://user:pass@host:port/dbname');
 
-$dbAsserture->cleanTable('db.table_name');
-$dbAsserture->insertOne('db.table_name', ['id' => 1, 'name' => 'Name']);
-$dbAsserture->selectOne('db.table_name', ['id' => 1]); // return one register with all fields matching provided filters
-$dbAsserture->selectMany('db.table_name', ['name' => 'John']); // return many registers with all fields matching provided filter
-$dbAsserture->assertOneIsRegistered('db.table_name', ['id' => 1, 'name' => 'Name']); // return true or throw exception
+// Clean tables
+$dbAsserture->cleanTable('table_name', 'another_table_name');
+
+// Insert registers
+$dbAsserture->insert('table_name', ['id' => 1, 'name' => 'Name']);
+$dbAsserture->insert('table_name',
+    ['id' => 1, 'name' => 'Name'],
+    ['id' => 2, 'name' => 'Another name'],
+);
+
+// Select registers
+$dbAsserture->select('table_name', ['name' => 'John']); // return many registers with all fields matching provided filter
+$dbAsserture->selectOne('table_name', ['id' => 1]); // return one register with all fields matching provided filters
+
+// Assert if is registered in database
+$dbAsserture->assertOneIsRegistered('table_name', ['id' => 1, 'name' => 'Name']); // return true or throw exception
 ```

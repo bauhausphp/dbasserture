@@ -18,26 +18,20 @@ class DbAsserture
         $this->dbConnection = $database;
     }
 
-    public function insertOne(string $table, array $register): void
+    public function insert(string $table, array ...$registers): void
     {
-        $insert = new Insert($table, new Register($register));
-
-        $this->dbConnection->run($insert);
+        array_walk(
+            $registers,
+            fn(array $register) => $this->dbConnection->run(new Insert($table, new Register($register)))
+        );
     }
 
-    public function insertMany(string $table, array $registers): void
+    public function cleanTable(string ...$tables): void
     {
-        foreach ($registers as $register) {
-            $this->insertOne($table, $register);
-        }
+        array_walk($tables, fn(string $table) => $this->dbConnection->run(new DeleteAll($table)));
     }
 
-    public function cleanTable(string $table): void
-    {
-        $this->dbConnection->run(new DeleteAll($table));
-    }
-
-    public function selectMany(string $table, array $filters): array
+    public function select(string $table, array $filters): array
     {
         $registers = $this->dbConnection->query(new Select($table, new Register($filters)));
 
@@ -46,7 +40,7 @@ class DbAsserture
 
     public function selectOne(string $table, array $filters): array
     {
-        $registers = $this->selectMany($table, $filters);
+        $registers = $this->select($table, $filters);
 
         if (count($registers) !== 1) {
             throw new DbAssertureMoreThanOneRegisterFoundException($table, $filters, $registers);
