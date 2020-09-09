@@ -44,13 +44,9 @@ class DbAssertureTest extends TestCase
         $query1 = new Insert('table', new Register(['field2' => 'value2']));
 
         $this->dbConnection
-            ->expects($this->at(0))
+            ->expects($this->exactly(2))
             ->method('run')
-            ->with($query0);
-        $this->dbConnection
-            ->expects($this->at(1))
-            ->method('run')
-            ->with($query1);
+            ->withConsecutive([$query0], [$query1]);
 
         $this->dbAsserture->insertMany('table', [
             ['field1' => 'value1'],
