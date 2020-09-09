@@ -30,7 +30,7 @@ class SqliteDbAssertureTest extends TestCase
         $this->insertLine(1, 'Jane');
         $this->insertLine(2, 'John');
 
-        $this->dbAsserture->cleanTable('sample');
+        $this->dbAsserture->clean('sample');
 
         $this->assertEmpty($this->fetchLines());
     }

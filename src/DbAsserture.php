@@ -26,7 +26,7 @@ class DbAsserture
         );
     }
 
-    public function cleanTable(string ...$tables): void
+    public function clean(string ...$tables): void
     {
         array_walk($tables, fn(string $table) => $this->dbConnection->run(new DeleteAll($table)));
     }
