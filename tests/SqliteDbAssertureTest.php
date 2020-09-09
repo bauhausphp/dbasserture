@@ -44,7 +44,7 @@ class SqliteDbAssertureTest extends TestCase
             ['id' => '1', 'name' => 'Name'],
         ];
 
-        $this->dbAsserture->insertOne('sample', ['id' => 1, 'name' => 'Name']);
+        $this->dbAsserture->insert('sample', ['id' => 1, 'name' => 'Name']);
 
         $this->assertEquals($expected, $this->fetchLines());
     }
@@ -59,10 +59,7 @@ class SqliteDbAssertureTest extends TestCase
             ['id' => '2', 'name' => 'Jane'],
         ];
 
-        $this->dbAsserture->insertMany('sample', [
-            ['id' => 1, 'name' => 'John'],
-            ['id' => 2, 'name' => 'Jane'],
-        ]);
+        $this->dbAsserture->insert('sample', ['id' => 1, 'name' => 'John'], ['id' => 2, 'name' => 'Jane']);
 
         $this->assertEquals($expected, $this->fetchLines());
     }
