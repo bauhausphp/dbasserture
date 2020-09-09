@@ -8,10 +8,9 @@ trait ExceptionConvertingArrayToStringTrait
     {
         $elements = [];
         foreach ($arr as $k => $v) {
-            $elements[] = "'$k' => '$v'";
+            $elements[] = "  $k => $v";
         }
 
-        $elements = implode(', ', $elements);
-        return "  [$elements]";
+        return implode("\n", $elements);
     }
 }

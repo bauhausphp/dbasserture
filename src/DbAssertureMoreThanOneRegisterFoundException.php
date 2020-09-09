@@ -33,6 +33,12 @@ class DbAssertureMoreThanOneRegisterFoundException extends RuntimeException
     {
         $registers = array_map(fn(array $register) => $this->arrayToString($register), $registers);
 
-        return implode("\n", $registers);
+        $string = '';
+        foreach ($registers as $k => $register) {
+            $number = $k + 1;
+            $string .= "\n$number.\n$register";
+        }
+
+        return trim($string, "\n");
     }
 }
