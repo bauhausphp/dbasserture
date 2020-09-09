@@ -5,7 +5,7 @@ namespace Bauhaus\DbAsserture;
 use Bauhaus\DbAsserture\DbConnection\DbConnection;
 use Bauhaus\DbAsserture\Queries\Insert;
 use Bauhaus\DbAsserture\Queries\Select;
-use Bauhaus\DbAsserture\Queries\Truncate;
+use Bauhaus\DbAsserture\Queries\DeleteAll;
 use Bauhaus\DbAsserture\Sql\Register;
 
 class DbAsserture
@@ -34,7 +34,7 @@ class DbAsserture
 
     public function cleanTable(string $table): void
     {
-        $this->dbConnection->run(new Truncate($table));
+        $this->dbConnection->run(new DeleteAll($table));
     }
 
     public function selectMany(string $table, array $filters): array

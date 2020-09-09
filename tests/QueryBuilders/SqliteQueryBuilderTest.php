@@ -4,7 +4,7 @@ namespace Bauhaus\DbAsserture\QueryBuilders;
 
 use Bauhaus\DbAsserture\Queries\Insert;
 use Bauhaus\DbAsserture\Queries\Select;
-use Bauhaus\DbAsserture\Queries\Truncate;
+use Bauhaus\DbAsserture\Queries\DeleteAll;
 use Bauhaus\DbAsserture\Sql\Register;
 
 class SqliteQueryBuilderTest extends QueryBuilderTestCase
