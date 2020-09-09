@@ -2,9 +2,7 @@
 
 namespace Bauhaus\DbAsserture\QueryBuilders;
 
-use Bauhaus\DbAsserture\Queries\Insert;
-use Bauhaus\DbAsserture\Queries\Select;
-use Bauhaus\DbAsserture\Queries\Truncate;
+use Bauhaus\DbAsserture\Queries\Query;
 use PHPUnit\Framework\TestCase;
 
 abstract class QueryBuilderTestCase extends TestCase
@@ -17,33 +15,13 @@ abstract class QueryBuilderTestCase extends TestCase
     }
 
     abstract protected function createQueryBuilder(): QueryBuilder;
-    abstract protected function truncateQueries(): array;
-    abstract protected function insertQueries(): array;
-    abstract protected function selectQueries(): array;
+    abstract public function queriesWithExpectedResult(): array;
 
     /**
      * @test
-     * @dataProvider truncateQueries
+     * @dataProvider queriesWithExpectedResult
      */
-    public function buildTruncateQuery(Truncate $query, string $expected): void
-    {
-        $this->assertEquals($expected, $this->queryBuilder->build($query));
-    }
-
-    /**
-     * @test
-     * @dataProvider insertQueries
-     */
-    public function buildInsertQuery(Insert $query, string $expected): void
-    {
-        $this->assertEquals($expected, $this->queryBuilder->build($query));
-    }
-
-    /**
-     * @test
-     * @dataProvider selectQueries
-     */
-    public function buildSelectQuery(Select $query, string $expected): void
+    public function createQueryProperly(Query $query, string $expected): void
     {
         $this->assertEquals($expected, $this->queryBuilder->build($query));
     }
