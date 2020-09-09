@@ -6,7 +6,6 @@ use Bauhaus\DbAsserture\Queries\Insert;
 use Bauhaus\DbAsserture\Queries\Select;
 use Bauhaus\DbAsserture\Queries\DeleteAll;
 use Bauhaus\DbAsserture\Sql\Register;
-use PHPUnit\Framework\TestCase;
 
 class MySqlQueryBuilderTest extends QueryBuilderTestCase
 {
