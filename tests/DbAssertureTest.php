@@ -63,7 +63,7 @@ class DbAssertureTest extends TestCase
             ->method('run')
             ->with($query);
 
-        $this->dbAsserture->cleanTable('table');
+        $this->dbAsserture->clean('table');
     }
 
     /**
@@ -79,7 +79,7 @@ class DbAssertureTest extends TestCase
             ->method('run')
             ->withConsecutive([$query1], [$query2]);
 
-        $this->dbAsserture->cleanTable('table-1', 'table-2');
+        $this->dbAsserture->clean('table-1', 'table-2');
     }
 
     /**

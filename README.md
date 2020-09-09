@@ -18,7 +18,7 @@ $factory = new DbAssertureFactory();
 $dbAsserture = $factory->fromDsn('mysql://user:pass@host:port/dbname');
 
 // Clean tables
-$dbAsserture->cleanTable('table_name', 'another_table_name');
+$dbAsserture->clean('table_name', 'another_table_name');
 
 // Insert registers
 $dbAsserture->insert('table_name', ['id' => 1, 'name' => 'Name']);
