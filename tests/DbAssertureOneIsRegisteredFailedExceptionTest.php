@@ -12,19 +12,32 @@ class DbAssertureOneIsRegisteredFailedExceptionTest extends TestCase
     public function createProperMessage(): void
     {
         $table = 'db.table';
-        $filter = ['id' => 'id-value'];
-        $expected = ['id' => 'id-value', 'field' => 'v1'];
-        $actual = ['field' => 'v2', 'id' => 'id-value'];
+        $filters = [
+            'id' => 'id-value',
+            'field' => 'field-value',
+        ];
+        $expected = ['id' => 'id-value', 'field' => 'v1', 'missing' => 'm'];
+        $actual = ['field' => 'v2', 'id' => 'id-value', 'added' => 'a'];
 
-        $exception = new DbAssertureOneIsRegisteredFailedException($table, $filter, $expected, $actual);
+        $exception = new DbAssertureOneIsRegisteredFailedException($table, $filters, $expected, $actual);
 
         $expected = <<<MSG
         Not equal register found from "db.table" filtered by:
-          ['id' => 'id-value']
+          id => id-value
+          field => field-value
         Expected:
-          ['id' => 'id-value', 'field' => 'v1']
+          field => v1
+          id => id-value
+          missing => m
         Actual:
-          ['id' => 'id-value', 'field' => 'v2']
+          added => a
+          field => v2
+          id => id-value
+        Diff:
+          + added => a
+          + field => v2
+          - field => v1
+          - missing => m
         MSG;
         $this->assertEquals($expected, $exception->getMessage());
     }

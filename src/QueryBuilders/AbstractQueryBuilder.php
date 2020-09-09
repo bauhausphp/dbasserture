@@ -9,7 +9,6 @@ use Bauhaus\DbAsserture\Queries\Select;
 abstract class AbstractQueryBuilder implements QueryBuilder
 {
     protected const ESCAPE_CHAR = null;
-    protected const USE_QUERY_TEMPLATE = null;
     protected const QUERY_TEMPLATES = [];
 
     public function build(Query $query): string
@@ -22,10 +21,7 @@ abstract class AbstractQueryBuilder implements QueryBuilder
 
     private function determineTemplate(Query $query): string
     {
-        $useTemplate = static::USE_QUERY_TEMPLATE;
-        $queryTemplate = static::QUERY_TEMPLATES[get_class($query)];
-
-        return $query->database() ? "$useTemplate $queryTemplate" : $queryTemplate;
+        return static::QUERY_TEMPLATES[get_class($query)];
     }
 
     private function buildPlaceholders(Query $query): array

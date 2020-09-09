@@ -5,7 +5,7 @@ namespace Bauhaus\DbAsserture;
 use Bauhaus\DbAsserture\DbConnection\DbConnection;
 use Bauhaus\DbAsserture\Queries\Insert;
 use Bauhaus\DbAsserture\Queries\Select;
-use Bauhaus\DbAsserture\Queries\Truncate;
+use Bauhaus\DbAsserture\Queries\DeleteAll;
 use Bauhaus\DbAsserture\Sql\Register;
 use PHPUnit\Framework\TestCase;
 
@@ -44,13 +44,9 @@ class DbAssertureTest extends TestCase
         $query1 = new Insert('table', new Register(['field2' => 'value2']));
 
         $this->dbConnection
-            ->expects($this->at(0))
+            ->expects($this->exactly(2))
             ->method('run')
-            ->with($query0);
-        $this->dbConnection
-            ->expects($this->at(1))
-            ->method('run')
-            ->with($query1);
+            ->withConsecutive([$query0], [$query1]);
 
         $this->dbAsserture->insertMany('table', [
             ['field1' => 'value1'],
@@ -63,7 +59,7 @@ class DbAssertureTest extends TestCase
      */
     public function truncateTableByCallingDbConnectionWithTruncateQuery(): void
     {
-        $query = new Truncate('table');
+        $query = new DeleteAll('table');
 
         $this->dbConnection
             ->expects($this->once())
