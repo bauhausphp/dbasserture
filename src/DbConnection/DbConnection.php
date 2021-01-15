@@ -6,6 +6,7 @@ use Bauhaus\DbAsserture\Queries\Query;
 use Bauhaus\DbAsserture\QueryBuilders\QueryBuilder;
 use Bauhaus\DbAsserture\Sql\Register;
 use PDO;
+use PDOException;
 use PDOStatement;
 
 class DbConnection
@@ -34,10 +35,11 @@ class DbConnection
     private function execute(Query $query): PDOStatement
     {
         $statement = $this->prepare($query);
-        $status = $statement->execute($query->binds());
 
-        if (false === $status) {
-            throw new DbExecException($statement);
+        try {
+            $statement->execute($query->binds());
+        } catch (PDOException $ex) {
+            throw new DbExecException($ex);
         }
 
         return $statement;
@@ -46,9 +48,10 @@ class DbConnection
     private function prepare(Query $query): PDOStatement
     {
         $query = $this->queryBuilder->build($query);
-        $statement = $this->pdo->prepare($query);
 
-        if (false === $statement) {
+        try {
+            $statement = $this->pdo->prepare($query);
+        } catch (PDOException) {
             throw new DbPrepareException($query);
         }
 
