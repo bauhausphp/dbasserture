@@ -17,13 +17,13 @@
 
     "autoload": {
         "psr-4": {
-            "Bauhaus\\DbAsserture\\": "src/"
+            "Bauhaus\\": "src/"
         }
     },
 
     "autoload-dev": {
         "psr-4": {
-            "Bauhaus\\DbAsserture\\": "tests/"
+            "Bauhaus\\": "tests/"
         }
     },
 
