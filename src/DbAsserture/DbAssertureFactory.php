@@ -55,7 +55,7 @@ class DbAssertureFactory
         $queryBuilderClass = self::QUERY_BUILDERS[$dsn->protocol()] ?? null;
 
         if (null !== $queryBuilderClass) {
-            return new $queryBuilderClass;
+            return new $queryBuilderClass();
         }
 
         $supportedProtocols = array_keys(self::QUERY_BUILDERS);

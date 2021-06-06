@@ -69,6 +69,6 @@ abstract class AbstractQueryBuilder implements QueryBuilder
 
     private function escape(string $toEscape): string
     {
-        return static::ESCAPE_CHAR.$toEscape.static::ESCAPE_CHAR;
+        return static::ESCAPE_CHAR . $toEscape . static::ESCAPE_CHAR;
     }
 }
